@@ -213,20 +213,23 @@ function setupTouchEvents() {
     setupSwipeGestures();
 }
 
-// Swipe gestures for mobile
+// Swipe gestures for mobile and mouse drag for desktop
 function setupSwipeGestures() {
     const carSeatWrapper = document.querySelector('.car-seat-wrapper');
     if (!carSeatWrapper) return;
 
     let startX = 0;
     let startY = 0;
-    let isScrolling = false;
+    let isDragging = false;
+    let isHorizontal = false;
 
+    // Touch events for mobile
     carSeatWrapper.addEventListener('touchstart', function(e) {
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
-        isScrolling = false;
-    });
+        isDragging = false;
+        isHorizontal = false;
+    }, { passive: true });
 
     carSeatWrapper.addEventListener('touchmove', function(e) {
         if (!startX || !startY) return;
@@ -234,15 +237,24 @@ function setupSwipeGestures() {
         const diffX = startX - e.touches[0].clientX;
         const diffY = startY - e.touches[0].clientY;
 
-        if (Math.abs(diffX) > Math.abs(diffY)) {
-            // Horizontal swipe
-            e.preventDefault();
-            isScrolling = true;
+        if (!isHorizontal && Math.abs(diffX) > 10) {
+            isHorizontal = Math.abs(diffX) > Math.abs(diffY);
         }
-    });
+
+        if (isHorizontal && Math.abs(diffX) > Math.abs(diffY)) {
+            e.preventDefault();
+            isDragging = true;
+        }
+    }, { passive: false });
 
     carSeatWrapper.addEventListener('touchend', function(e) {
-        if (!isScrolling) return;
+        if (!isDragging || !startX) {
+            startX = 0;
+            startY = 0;
+            isDragging = false;
+            isHorizontal = false;
+            return;
+        }
 
         const diffX = startX - e.changedTouches[0].clientX;
         const threshold = 50;
@@ -259,7 +271,68 @@ function setupSwipeGestures() {
 
         startX = 0;
         startY = 0;
-        isScrolling = false;
+        isDragging = false;
+        isHorizontal = false;
+    }, { passive: true });
+
+    // Mouse events for desktop
+    let mouseDown = false;
+    let mouseStartX = 0;
+    let mouseStartY = 0;
+
+    carSeatWrapper.addEventListener('mousedown', function(e) {
+        mouseDown = true;
+        mouseStartX = e.clientX;
+        mouseStartY = e.clientY;
+        isDragging = false;
+        isHorizontal = false;
+    });
+
+    carSeatWrapper.addEventListener('mousemove', function(e) {
+        if (!mouseDown) return;
+
+        const diffX = mouseStartX - e.clientX;
+        const diffY = mouseStartY - e.clientY;
+
+        if (!isHorizontal && Math.abs(diffX) > 10) {
+            isHorizontal = Math.abs(diffX) > Math.abs(diffY);
+        }
+
+        if (isHorizontal && Math.abs(diffX) > Math.abs(diffY)) {
+            isDragging = true;
+        }
+    });
+
+    carSeatWrapper.addEventListener('mouseup', function(e) {
+        if (!mouseDown || !isDragging) {
+            mouseDown = false;
+            isDragging = false;
+            isHorizontal = false;
+            return;
+        }
+
+        const diffX = mouseStartX - e.clientX;
+        const threshold = 50;
+
+        if (Math.abs(diffX) > threshold) {
+            if (diffX > 0) {
+                // Drag left - next image
+                nextCarSeatImage();
+            } else {
+                // Drag right - previous image
+                prevCarSeatImage();
+            }
+        }
+
+        mouseDown = false;
+        isDragging = false;
+        isHorizontal = false;
+    });
+
+    carSeatWrapper.addEventListener('mouseleave', function() {
+        mouseDown = false;
+        isDragging = false;
+        isHorizontal = false;
     });
 }
 
@@ -416,6 +489,8 @@ function showNotification(message, type = 'info') {
 // Car seat carousel functionality
 let currentSeatIndex = 0;
 let seatImages = [];
+let dotsContainer;
+let autoRotateTimer;
 
 async function detectComponentImages() {
     try {
@@ -472,23 +547,16 @@ async function initCarSeatCarousel() {
     const carSeatWrapper = document.querySelector('.car-seat-wrapper');
     if (!carSeatWrapper) return;
 
-    // Create image element
-    const img = document.createElement('img');
-    img.src = seatImages[0];
-    img.alt = 'Car Seat Restoration';
-    img.style.cssText = `
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    `;
-    
+    // Create initial image element with smooth fade-in
+    const img = createSeatImage(seatImages[0]);
+    img.classList.add('active');
     carSeatWrapper.appendChild(img);
 
+    // Build dots
+    buildCarouselDots();
+
     // Auto-rotate images every 3 seconds
-    setInterval(() => {
-        nextCarSeatImage();
-    }, 3000);
+    startAutoRotate();
 }
 
 function nextCarSeatImage() {
@@ -506,16 +574,85 @@ function prevCarSeatImage() {
 }
 
 function updateCarSeatImage() {
-    const carSeatWrapper = document.querySelector('.car-seat-wrapper img');
-    if (!carSeatWrapper || !seatImages[currentSeatIndex]) return;
+    const wrapper = document.querySelector('.car-seat-wrapper');
+    if (!wrapper || !seatImages[currentSeatIndex]) return;
 
-    // Add transition effect
-    carSeatWrapper.style.transform = 'scale(0.95)';
-    
-    setTimeout(() => {
-        carSeatWrapper.src = seatImages[currentSeatIndex];
-        carSeatWrapper.style.transform = 'scale(1)';
-    }, 150);
+    const current = wrapper.querySelector('.carousel-image.active') || wrapper.querySelector('.carousel-image');
+    const nextImg = createSeatImage(seatImages[currentSeatIndex]);
+    wrapper.appendChild(nextImg);
+
+    // Allow layout to apply before toggling classes for transition
+    requestAnimationFrame(() => {
+        nextImg.classList.add('active');
+        if (current) current.classList.remove('active');
+    });
+
+    if (current) {
+        current.addEventListener('transitionend', () => {
+            if (current.parentNode) current.parentNode.removeChild(current);
+        }, { once: true });
+    }
+
+    updateCarouselDots();
+}
+
+function createSeatImage(src) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Car Seat Restoration';
+    img.className = 'carousel-image';
+    return img;
+}
+
+function startAutoRotate() {
+    stopAutoRotate();
+    autoRotateTimer = setInterval(() => {
+        nextCarSeatImage();
+    }, 4000);
+}
+
+function stopAutoRotate() {
+    if (autoRotateTimer) {
+        clearInterval(autoRotateTimer);
+        autoRotateTimer = null;
+    }
+}
+
+// Build carousel dots dynamically
+function buildCarouselDots() {
+    dotsContainer = document.querySelector('.carousel-dots');
+    if (!dotsContainer) return;
+
+    dotsContainer.innerHTML = '';
+    seatImages.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (index === currentSeatIndex ? ' active' : '');
+        dot.setAttribute('role', 'tab');
+        dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+        dot.setAttribute('aria-selected', index === currentSeatIndex ? 'true' : 'false');
+        dot.addEventListener('click', () => {
+            currentSeatIndex = index;
+            updateCarSeatImage();
+            startAutoRotate();
+        });
+        dotsContainer.appendChild(dot);
+    });
+}
+
+// Update active state of dots
+function updateCarouselDots() {
+    if (!dotsContainer) dotsContainer = document.querySelector('.carousel-dots');
+    if (!dotsContainer) return;
+    const dots = dotsContainer.querySelectorAll('.carousel-dot');
+    dots.forEach((dot, index) => {
+        if (index === currentSeatIndex) {
+            dot.classList.add('active');
+            dot.setAttribute('aria-selected', 'true');
+        } else {
+            dot.classList.remove('active');
+            dot.setAttribute('aria-selected', 'false');
+        }
+    });
 }
 
 // Initialize new features
