@@ -6,53 +6,56 @@
 // Gallery data (shared with gallery-page.js)
 const galleryData = [
   {
-    src: 'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png',
+    src: 'component/Gallery/Blue.png',
     title: 'Vibrant Blue Leather Upholstery',
     description: 'Sporty style in deep blue leather. Featuring strong side supports and quality stitching.',
     variants: [
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png', title: 'Blue with Black Accents' },
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png', title: 'Blue with Red Accents' },
-      { src: 'component/Black-&-Red.png', title: 'Blue with Sport Stitching' }
+      { src: 'component/Gallery/Blue.png', title: 'Blue with Black Accents' },
+      { src: 'component/Gallery/Red.png', title: 'Blue with Red Accents' },
+      { src: 'component/Gallery/Black-&-Red.png', title: 'Blue with Sport Stitching' }
     ]
   },
   {
-    src: 'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png',
+    src: 'component/Gallery/Red.png',
     title: 'Vibrant Red Sport Upholstery',
     description: 'Sporty Upholstery with Vibrant Red Leather. Features ergonomic side bolsters and precision stitching for ultimate comfort and style.',
     variants: [
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png', title: 'Solid Red' },
-      { src: 'component/Black-&-Red.png', title: 'Red with Black Accents' },
-      { src: 'component/Black-&-Orange.png', title: 'Red with Orange Details' }
+      { src: 'component/Gallery/Red.png', title: 'Solid Red' },
+      { src: 'component/Gallery/Black-&-Red.png', title: 'Red with Black Accents' },
+      { src: 'component/Gallery/Black-&-Orange.png', title: 'Red with Orange Details' }
     ]
   },
   {
-    src: 'component/Black-&-Red.png',
+    src: 'component/Gallery/Black-&-Red.png',
     title: 'Two-Tone Sport Upholstery (Black/Red)',
     description: 'Two-Tone Sport Upholstery in Black & Red Leather. Features ergonomic side bolsters and precision stitching for a high-contrast, modern look.',
     variants: [
-      { src: 'component/Black-&-Red.png', title: 'Classic Black/Red' },
-      { src: 'component/Dark-blue-&-white.png', title: 'Black with White Insert' },
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png', title: 'Black with Red Stitching' }
+      { src: 'component/Image Variaant/Black-&-Red-1.png', title: 'Black/Red View 1' },
+      { src: 'component/Image Variaant/Black-&-Red-2.png', title: 'Black/Red View 2' },
+      { src: 'component/Image Variaant/Black-&-Red-3.png', title: 'Black/Red View 3' },
+      { src: 'component/Image Variaant/Black-&-Red-4.png', title: 'Black/Red View 4' }
     ]
   },
   {
-    src: 'component/Dark-blue-&-white.png',
+    src: 'component/Gallery/Dark-blue-&-white.png',
     title: 'Two-Tone Modern Look (Dark Blue/White)',
     description: 'Elegant Two-Tone Upholstery in Dark Blue & White Leather. Features ergonomic side bolsters and precision stitching for a classic, refined look.',
     variants: [
-      { src: 'component/Dark-blue-&-white.png', title: 'Classic Blue/White' },
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png', title: 'Deep Blue Base' },
-      { src: 'component/Black-&-Orange.png', title: 'Blue with Orange Accents' }
+      { src: 'component/Image Variaant/Dark-blue-&-white-1.png', title: 'Two-Tone Modern Look (Dark Blue/White)' },
+      { src: 'component/Image Variaant/Dark-blue-&-white-2.png', title: 'Two-Tone Modern Look (Dark Blue/White)' },
+      { src: 'component/Image Variaant/Dark-blue-&-white4.png', title: 'Two-Tone Modern Look (Dark Blue/White)' },
+      { src: 'component/Image Variaant/Dark-blue-&-white-2 (2).png', title: 'Two-Tone Modern Look (Dark Blue/White)' }
     ]
   },
   {
-    src: 'component/Black-&-Orange.png',
+    src: 'component/Gallery/Black-&-Orange.png',
     title: 'Premium Two-Tone (Black/Orange) Upholstery',
     description: 'Premium Sport Upholstery with Dynamic Orange Inserts. Combines rich black leather with vibrant Orange, engineered with supportive bolsters for comfort.',
     variants: [
-      { src: 'component/Black-&-Orange.png', title: 'Classic Black/Orange' },
-      { src: 'component/Black-&-Red.png', title: 'Black/Orange with Red Details' },
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png', title: 'Black/Orange with Blue Accents' }
+      { src: 'component/Image Variaant/Black-&-Orange-1.png', title: 'Right Side View' },
+      { src: 'component/Image Variaant/Black-&-Orange-2.png', title: 'Left Side View' },
+      { src: 'component/Image Variaant/Black-&-Orange-3.png', title: 'Right Side Car View' },
+      { src: 'component/Image Variaant/Black-&-Orange-4.png', title: 'Left Side Back View' }
     ]
   }
 ];
@@ -82,6 +85,17 @@ function initImageDetail() {
 
   currentImage = galleryData[imageIndex];
   displayImageDetail(currentImage);
+
+  // Add error handling for main image
+  setTimeout(() => {
+    const mainImg = document.getElementById('main-image');
+    if (mainImg) {
+      mainImg.onerror = function() {
+        console.log(`Main image failed to load: ${currentImage.src}`);
+        showEmptyState();
+      };
+    }
+  }, 100);
 
   // Initialize variant selection
   setupVariants();
@@ -172,6 +186,15 @@ function setupVariants() {
     item.addEventListener('touchend', function() {
       this.style.transform = '';
     });
+
+    // Add error handling for variant thumbnails
+    const thumbnailImg = item.querySelector('.variant-thumbnail img');
+    if (thumbnailImg && currentImage) {
+      thumbnailImg.onerror = function() {
+        console.log(`Variant thumbnail failed to load: ${this.src}, using main image`);
+        this.src = currentImage.src;
+      };
+    }
   });
 }
 
@@ -244,6 +267,14 @@ function setVariantIndex(index) {
   nextImg.style.transition = 'opacity 800ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1)';
   nextImg.style.zIndex = '2';
   nextImg.style.visibility = 'visible';
+
+  // Add error handling - fallback to main image if variant fails
+  nextImg.onerror = function() {
+    console.log(`Variant image failed to load: ${variant.src}, using main image`);
+    if (currentImage && currentImage.src) {
+      this.src = currentImage.src;
+    }
+  };
 
   // Ensure current image is positioned and visible initially
   currentImg.style.position = 'absolute';

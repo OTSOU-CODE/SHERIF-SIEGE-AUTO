@@ -185,7 +185,6 @@
   transition: var(--transition-slow);
   pointer-events: none; /* ensure container receives gestures */
   -webkit-user-drag: none;
-  user-drag: none;
   position: absolute;
   top: 0;
   left: 0;

@@ -495,11 +495,11 @@ let autoRotateTimer;
 async function detectComponentImages() {
     try {
         const knownImages = [
-            'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png',
-            'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png',
-            'component/Black-&-Red.png',
-            'component/Dark-blue-&-white.png',
-            'component/Black-&-Orange.png'
+            'component/Gallery/Blue.png',
+            'component/Gallery/Red.png',
+            'component/Gallery/Black-&-Red.png',
+            'component/Gallery/Dark-blue-&-white.png',
+            'component/Gallery/Black-&-Orange.png'
         ];
 
         const allImages = [];
@@ -527,11 +527,11 @@ async function detectComponentImages() {
     } catch (error) {
         console.log('Using fallback images');
         return [
-            'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png',
-            'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png',
-            'component/Black-&-Red.png',
-            'component/Dark-blue-&-white.png',
-            'component/Black-&-Orange.png'
+            'component/Gallery/Blue.png',
+            'component/Gallery/Red.png',
+            'component/Gallery/Black-&-Red.png',
+            'component/Gallery/Dark-blue-&-white.png',
+            'component/Gallery/Black-&-Orange.png'
         ];
     }
 }
