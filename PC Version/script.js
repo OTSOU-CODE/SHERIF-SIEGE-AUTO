@@ -1,15 +1,33 @@
 // SHERIF-SIEGE-AUTO - Professional Auto Upholstery Website JavaScript
 
-// Theme Switcher Functionality
+// Theme Switcher Functionality (in-page toggle like phone version)
 document.addEventListener('DOMContentLoaded', function() {
   const themeToggle = document.getElementById('theme-toggle');
-  
+  const ICON_SUN = 'fas fa-sun';
+  const ICON_MOON = 'fas fa-moon';
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    if (themeToggle) {
+      const icon = themeToggle.querySelector('i');
+      if (icon) icon.className = theme === 'dark' ? ICON_SUN : ICON_MOON;
+    }
+  }
+
+  function loadTheme() {
+    const saved = localStorage.getItem('theme') || 'light';
+    applyTheme(saved);
+  }
+
   if (themeToggle) {
     themeToggle.addEventListener('click', function() {
-      // Switch to light theme
-      window.location.href = '../light view/index.html';
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
     });
   }
+
+  loadTheme();
 });
 
 // Global Variables

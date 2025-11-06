@@ -3,59 +3,46 @@
 
 // Copy of image-detail.js to maintain functionality after rename
 
-// Gallery data (shared with gallery-page.js)
+// Gallery data for PC Version (aligned with PC gallery.html ordering)
 const galleryData = [
   {
-    src: 'component/Gallery/Blue.png',
-    title: 'Vibrant Blue Leather Upholstery',
-    description: 'Sporty style in deep blue leather. Featuring strong side supports and quality stitching.',
+    src: 'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png',
+    title: 'Premium Black & Orange Design',
+    description: 'Sporty two-tone upholstery with vibrant orange accents on premium black leather. Features ergonomic side bolsters and precision stitching.',
     variants: [
-      { src: 'component/Gallery/Blue.png', title: 'Blue with Black Accents' },
-      { src: 'component/Gallery/Red.png', title: 'Blue with Red Accents' },
-      { src: 'component/Gallery/Black-&-Red.png', title: 'Blue with Sport Stitching' }
+      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png', title: 'Main View' }
     ]
   },
   {
-    src: 'component/Gallery/Red.png',
-    title: 'Vibrant Red Sport Upholstery',
-    description: 'Sporty Upholstery with Vibrant Red Leather. Features ergonomic side bolsters and precision stitching for ultimate comfort and style.',
+    src: 'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png',
+    title: 'Elegant Blue & Black Style',
+    description: 'Sophisticated blue and black leather combination with modern design elements. Perfect blend of comfort and style.',
     variants: [
-      { src: 'component/Gallery/Red.png', title: 'Solid Red' },
-      { src: 'component/Gallery/Black-&-Red.png', title: 'Red with Black Accents' },
-      { src: 'component/Gallery/Black-&-Orange.png', title: 'Red with Orange Details' }
+      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png', title: 'Main View' }
     ]
   },
   {
-    src: 'component/Gallery/Black-&-Red.png',
-    title: 'Two-Tone Sport Upholstery (Black/Red)',
-    description: 'Two-Tone Sport Upholstery in Black & Red Leather. Features ergonomic side bolsters and precision stitching for a high-contrast, modern look.',
+    src: 'component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png',
+    title: 'Classic Red & Brown Finish',
+    description: 'Traditional red and brown leather with premium stitching and classic automotive styling. Timeless elegance meets modern comfort.',
     variants: [
-      { src: 'component/Image Variaant/Black-&-Red-1.png', title: 'Right Side View' },
-      { src: 'component/Image Variaant/Black-&-Red-2.png', title: 'Left Side View' },
-      { src: 'component/Image Variaant/Black-&-Red-3.png', title: 'Right Side Car View' },
-      { src: 'component/Image Variaant/Black-&-Red-4.png', title: 'Left Side Back View' }
+      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png', title: 'Main View' }
     ]
   },
   {
-    src: 'component/Gallery/Dark-blue-&-white.png',
-    title: 'Two-Tone Modern Look (Dark Blue/White)',
-    description: 'Elegant Two-Tone Upholstery in Dark Blue & White Leather. Features ergonomic side bolsters and precision stitching for a classic, refined look.',
+    src: 'component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png',
+    title: 'Modern Yellow & Black Look',
+    description: 'Bold yellow accents on sleek black leather create a striking contrast. Contemporary design with exceptional craftsmanship.',
     variants: [
-      { src: 'component/Image Variaant/Dark-blue-&-white-1.png', title: 'Right Side View' },
-      { src: 'component/Image Variaant/Dark-blue-&-white-2.png', title: 'Left Side View' },
-      { src: 'component/Image Variaant/Dark-blue-&-white-3.png', title: 'Right Side Car View' },
-      { src: 'component/Image Variaant/Dark-blue-&-white-4.png', title: 'Left Side Back View' }
+      { src: 'component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png', title: 'Main View' }
     ]
   },
   {
-    src: 'component/Gallery/Black-&-Orange.png',
-    title: 'Premium Two-Tone (Black/Orange) Upholstery',
-    description: 'Premium Sport Upholstery with Dynamic Orange Inserts. Combines rich black leather with vibrant Orange, engineered with supportive bolsters for comfort.',
+    src: 'component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png',
+    title: 'Luxury Green & Brown Design',
+    description: 'Rich forest green with warm brown leather inserts. Premium materials and expert craftsmanship for the ultimate in automotive luxury.',
     variants: [
-      { src: 'component/Image Variaant/Black-&-Orange-1.png', title: 'Right Side View' },
-      { src: 'component/Image Variaant/Black-&-Orange-2.png', title: 'Left Side View' },
-      { src: 'component/Image Variaant/Black-&-Orange-3.png', title: 'Right Side Car View' },
-      { src: 'component/Image Variaant/Black-&-Orange-4.png', title: 'Left Side Back View' }
+      { src: 'component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png', title: 'Main View' }
     ]
   }
 ];
@@ -64,6 +51,7 @@ const galleryData = [
 let currentImage = null;
 let currentVariantIndex = 0;
 let dotsContainerDetail = null;
+let variantAutoTimer = null;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -105,7 +93,12 @@ function initImageDetail() {
     if (mainImg) {
       mainImg.onerror = function() {
         console.log(`Main image failed to load: ${currentImage.src}`);
-        showEmptyState();
+        // Attempt fallback to first available variant or show empty
+        if (currentImage.variants && currentImage.variants[0]) {
+          this.src = currentImage.variants[0].src;
+        } else {
+          showEmptyState();
+        }
       };
       // Make main image clickable to enlarge
       mainImg.style.cursor = 'pointer';
@@ -123,6 +116,10 @@ function initImageDetail() {
 
   // Enable swipe/drag navigation between variants
   setupDetailSwipe();
+
+  // Preload variant images and start auto-rotate if multiple
+  preloadVariants();
+  startVariantAutoRotate();
 }
 
 // Display image detail
@@ -370,6 +367,32 @@ function setVariantIndex(index) {
   }, 900);
 
   updateDetailDots();
+}
+
+function preloadVariants() {
+  if (!currentImage) return;
+  const list = (currentImage.variants && currentImage.variants.length > 0)
+    ? currentImage.variants
+    : [{ src: currentImage.src, title: currentImage.title }];
+  list.forEach(v => { const img = new Image(); img.src = v.src; });
+}
+
+function startVariantAutoRotate() {
+  stopVariantAutoRotate();
+  if (!currentImage) return;
+  const total = (currentImage.variants && currentImage.variants.length) || 1;
+  if (total <= 1) return;
+  variantAutoTimer = setInterval(() => {
+    currentVariantIndex = (currentVariantIndex + 1) % total;
+    setVariantIndex(currentVariantIndex);
+  }, 3500);
+}
+
+function stopVariantAutoRotate() {
+  if (variantAutoTimer) {
+    clearInterval(variantAutoTimer);
+    variantAutoTimer = null;
+  }
 }
 
 // Swipe/drag to navigate variants (left = next, right = previous)

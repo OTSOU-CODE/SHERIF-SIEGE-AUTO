@@ -116,7 +116,7 @@ function createGalleryItem(item, index) {
 
   galleryItem.innerHTML = `
     <div class="gallery-image">
-      <img src="${item.src}" alt="${item.title}" loading="lazy">
+      <img src="${item.src}" alt="${item.title}" title="${item.title}" loading="lazy">
       <div class="gallery-overlay">
         <i class="fas fa-search-plus"></i>
       </div>
