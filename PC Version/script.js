@@ -64,7 +64,9 @@ function initializeWebsite() {
   setupHeroAnimations();
   setupSeatInteractivity();
   setupPortfolio();
+  setupOurWorkSection();
   setupContactForm();
+  setupTestimonialsCarousel();
   setupScrollEffects();
   setupBackToTop();
   setupAccessibility();
@@ -174,12 +176,14 @@ function setupHeroAnimations() {
   
   const animateCounter = (element) => {
     const target = parseInt(element.getAttribute('data-target'));
+    if (isNaN(target)) return;
+    
     const duration = 2000;
-    const step = target / (duration / 16);
+    const increment = target / (duration / 16);
     let current = 0;
     
     const timer = setInterval(() => {
-      current += step;
+      current += increment;
       if (current >= target) {
         current = target;
         clearInterval(timer);
@@ -188,19 +192,24 @@ function setupHeroAnimations() {
     }, 16);
   };
 
-  // Trigger counter animation when hero section is in view
-  const heroObserver = new IntersectionObserver((entries) => {
+  // Trigger counter animation when section is in view
+  const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        statNumbers.forEach(animateCounter);
-        heroObserver.unobserve(entry.target);
+        statNumbers.forEach(stat => {
+          if (!stat.hasAttribute('data-animated')) {
+            stat.setAttribute('data-animated', 'true');
+            animateCounter(stat);
+          }
+        });
+        statsObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.3 });
 
-  const heroSection = document.getElementById('home');
-  if (heroSection) {
-    heroObserver.observe(heroSection);
+  const whyChooseSection = document.getElementById('why-choose-us');
+  if (whyChooseSection) {
+    statsObserver.observe(whyChooseSection);
   }
 }
 
@@ -294,9 +303,17 @@ function setupSeatInteractivity() {
       const img = document.createElement('img');
       img.className = `car-seat ${index === 0 ? 'active' : ''}`;
       img.src = imagePath;
-      img.alt = `Premium Car Seat - Color ${index + 1}`;
+      img.alt = `Premium Car Seat Restoration - Design ${index + 1} - SHERIF-SIEGE-AUTO`;
+      img.loading = index === 0 ? 'eager' : 'lazy'; // First image eager, others lazy
       img.setAttribute('data-color', `color-${index + 1}`);
       img.setAttribute('data-index', index);
+      img.setAttribute('decoding', 'async');
+      
+      // Add error handling
+      img.onerror = function() {
+        this.style.display = 'none';
+        console.warn(`Failed to load image: ${imagePath}`);
+      };
       
       seatWrapper.appendChild(img);
     });
@@ -437,9 +454,394 @@ function setupPortfolio() {
   renderPortfolio();
 }
 
-// Contact Form Setup
+// Our Work Section Setup
+function setupOurWorkSection() {
+  setupWorkFilters();
+  renderProjects('all'); // Initial render
+  setupBeforeAfterSlider();
+  animateWorkStats();
+  animateProjectCards();
+}
+
+// Work Projects Data
+const workProjects = [
+  {
+    id: 1,
+    title: "Mercedes-Benz E-Class Leather Restoration",
+    description: "Premium black leather replacement, custom stitching, completed in 5 days.",
+    image: "component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png",
+    category: "car-seats",
+    badge: "best-seller",
+    badgeText: "Best Seller",
+    rating: 5,
+    ratingCount: 24
+  },
+  {
+    id: 2,
+    title: "BMW 5 Series Dashboard Restoration",
+    description: "Complete dashboard refurbishment with premium materials and expert craftsmanship.",
+    image: "component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png",
+    category: "dashboards",
+    badge: "customer-favorite",
+    badgeText: "Customer Favorite",
+    rating: 5,
+    ratingCount: 18
+  },
+  {
+    id: 3,
+    title: "Honda Motorcycle Seat Custom Design",
+    description: "Custom leather seat with ergonomic design, weather protection, 3-day turnaround.",
+    image: "component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png",
+    category: "bike-seats",
+    badge: null,
+    badgeText: null,
+    rating: 5,
+    ratingCount: 12
+  },
+  {
+    id: 4,
+    title: "Audi A4 Complete Interior Makeover",
+    description: "Full interior restoration including seats, dashboard, and door panels.",
+    image: "component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png",
+    category: "car-seats",
+    badge: "best-seller",
+    badgeText: "Best Seller",
+    rating: 5,
+    ratingCount: 31
+  },
+  {
+    id: 5,
+    title: "Custom Stitching Pattern Design",
+    description: "Unique diamond-stitch pattern on premium leather seats, personalized design.",
+    image: "component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png",
+    category: "custom-stitching",
+    badge: null,
+    badgeText: null,
+    rating: 5,
+    ratingCount: 15
+  },
+  {
+    id: 6,
+    title: "Range Rover Sport Seat Upgrade",
+    description: "Luxury leather upgrade with heating system installation, 7-day completion.",
+    image: "component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png",
+    category: "car-seats",
+    badge: "customer-favorite",
+    badgeText: "Customer Favorite",
+    rating: 5,
+    ratingCount: 22
+  }
+];
+
+// Before/After Data
+const beforeAfterData = [
+  {
+    before: "component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png",
+    after: "component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png",
+    title: "BMW 3 Series Complete Restoration"
+  },
+  {
+    before: "component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png",
+    after: "component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png",
+    title: "Mercedes-Benz Interior Makeover"
+  },
+  {
+    before: "component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png",
+    after: "component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png",
+    title: "Audi A4 Premium Upgrade"
+  }
+];
+
+// Setup Work Filters
+function setupWorkFilters() {
+  const filterTabs = document.querySelectorAll('.filter-tab');
+  const projectsGrid = document.getElementById('projects-grid');
+  
+  if (!filterTabs.length || !projectsGrid) return;
+  
+  filterTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const filter = this.getAttribute('data-filter');
+      
+      // Update active state
+      filterTabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Filter projects
+      renderProjects(filter);
+    });
+  });
+}
+
+// Render Projects Grid
+function renderProjects(filter = 'all') {
+  const projectsGrid = document.getElementById('projects-grid');
+  if (!projectsGrid) return;
+  
+  const filteredProjects = filter === 'all' 
+    ? workProjects 
+    : workProjects.filter(p => p.category === filter);
+  
+  projectsGrid.innerHTML = '';
+  
+  filteredProjects.forEach((project, index) => {
+    const card = createProjectCard(project, index);
+    projectsGrid.appendChild(card);
+  });
+  
+  // Animate cards on render
+  setTimeout(() => {
+    animateProjectCards();
+  }, 100);
+}
+
+// Create Project Card
+function createProjectCard(project, index) {
+  const card = document.createElement('div');
+  card.className = 'project-card';
+  card.setAttribute('data-category', project.category);
+  card.style.transitionDelay = `${index * 0.1}s`;
+  
+  const stars = '★'.repeat(project.rating);
+  const badgeHTML = project.badge 
+    ? `<span class="project-badge ${project.badge}">${project.badgeText}</span>` 
+    : '';
+  
+  card.innerHTML = `
+    <div class="project-image-wrapper">
+      <img src="${project.image}" alt="${project.title}" class="project-image" loading="lazy">
+      <div class="project-overlay">
+        <div class="overlay-content">
+          <h4>${project.title}</h4>
+          <button class="view-details-btn" onclick="window.location.href='gallery.html'">
+            View Details <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="project-info">
+      ${badgeHTML}
+      <h3 class="project-title">${project.title}</h3>
+      <p class="project-description">${project.description}</p>
+      <div class="project-rating">
+        <span class="stars">${stars}</span>
+        <span class="rating-count">(${project.ratingCount} reviews)</span>
+      </div>
+      <button class="project-cta" onclick="window.location.href='gallery.html'">
+        View Project <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  `;
+  
+  return card;
+}
+
+// Setup Before/After Slider
+function setupBeforeAfterSlider() {
+  const slider = document.getElementById('ba-slider');
+  const prevBtn = document.querySelector('.ba-prev');
+  const nextBtn = document.querySelector('.ba-next');
+  
+  if (!slider) return;
+  
+  let currentIndex = 0;
+  
+  // Create before/after items
+  beforeAfterData.forEach((item, index) => {
+    const baItem = document.createElement('div');
+    baItem.className = `ba-item ${index === 0 ? 'active' : ''}`;
+    baItem.innerHTML = `
+      <div class="ba-image-wrapper before">
+        <img src="${item.before}" alt="Before - ${item.title}" class="ba-image" loading="lazy">
+        <div class="ba-label">Before</div>
+      </div>
+      <div class="ba-image-wrapper after">
+        <img src="${item.after}" alt="After - ${item.title}" class="ba-image" loading="lazy">
+        <div class="ba-label">After</div>
+      </div>
+    `;
+    slider.appendChild(baItem);
+  });
+  
+  function updateSlider() {
+    const items = slider.querySelectorAll('.ba-item');
+    items.forEach((item, index) => {
+      if (index === currentIndex) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+  
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % beforeAfterData.length;
+    updateSlider();
+  }
+  
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + beforeAfterData.length) % beforeAfterData.length;
+    updateSlider();
+  }
+  
+  if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+  if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+  
+  // Auto-rotate
+  let autoRotate = setInterval(nextSlide, 6000);
+  
+  // Pause on hover
+  const container = document.querySelector('.ba-slider-container');
+  if (container) {
+    container.addEventListener('mouseenter', () => clearInterval(autoRotate));
+    container.addEventListener('mouseleave', () => {
+      autoRotate = setInterval(nextSlide, 6000);
+    });
+  }
+  
+  // Touch/swipe support for mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  if (slider) {
+    slider.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    slider.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+  }
+  
+  function handleSwipe() {
+    if (touchEndX < touchStartX - 50) {
+      nextSlide();
+    }
+    if (touchEndX > touchStartX + 50) {
+      prevSlide();
+    }
+  }
+  
+  // Mouse drag support for desktop
+  let isDragging = false;
+  let dragStartX = 0;
+  
+  if (slider) {
+    slider.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      dragStartX = e.clientX;
+      slider.style.cursor = 'grabbing';
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const diffX = dragStartX - e.clientX;
+      if (Math.abs(diffX) > 50) {
+        if (diffX > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+        isDragging = false;
+        slider.style.cursor = 'grab';
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        slider.style.cursor = 'grab';
+      }
+    });
+    
+    slider.style.cursor = 'grab';
+  }
+}
+
+// Animate Work Stats Counter
+function animateWorkStats() {
+  const statNumber = document.querySelector('.work-stats .stat-number');
+  if (!statNumber) return;
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !statNumber.hasAttribute('data-animated')) {
+        statNumber.setAttribute('data-animated', 'true');
+        animateCounter(statNumber);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  
+  const statsSection = document.querySelector('.work-stats');
+  if (statsSection) {
+    observer.observe(statsSection);
+  }
+}
+
+function animateCounter(element) {
+  const target = parseInt(element.getAttribute('data-target'));
+  if (isNaN(target)) return;
+  
+  const duration = 2000;
+  const increment = target / (duration / 16);
+  let current = 0;
+  
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
+    element.textContent = Math.floor(current);
+  }, 16);
+}
+
+// Make renderProjects available globally for filter clicks
+window.renderProjects = renderProjects;
+
+// Animate Project Cards on Scroll
+function animateProjectCards() {
+  const cards = document.querySelectorAll('.project-card');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  cards.forEach(card => {
+    observer.observe(card);
+  });
+}
+
+// Initialize projects on load
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.getElementById('projects-grid')) {
+    renderProjects('all');
+  }
+});
+
+// Contact Form Setup with Enhanced Validation
 function setupContactForm() {
   const contactForm = document.getElementById('contact-form');
+  if (!contactForm) return;
+  
+  // Real-time validation
+  const inputs = contactForm.querySelectorAll('input, textarea');
+  inputs.forEach(input => {
+    input.addEventListener('blur', function() {
+      validateField(this);
+    });
+    
+    input.addEventListener('input', function() {
+      clearFieldError(this);
+    });
+  });
   
   contactForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -448,33 +850,291 @@ function setupContactForm() {
     const formData = new FormData(contactForm);
     const data = Object.fromEntries(formData);
     
-    // Basic validation
-    if (!data.name || !data.email || !data.message) {
-      alert('Please fill in all required fields.');
+    // Validate all fields
+    let isValid = true;
+    inputs.forEach(input => {
+      if (!validateField(input)) {
+        isValid = false;
+      }
+    });
+    
+    if (!isValid) {
+      showFormError('Please correct the errors before submitting.');
       return;
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
-
-    // Simulate form submission
+    // Simulate form submission with success animation
     const submitButton = contactForm.querySelector('button[type="submit"]');
     const originalText = submitButton.innerHTML;
     
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitButton.disabled = true;
+    submitButton.classList.add('sending');
     
     setTimeout(() => {
-      alert('Thank you for your message! We will get back to you soon.');
-      contactForm.reset();
-      submitButton.innerHTML = originalText;
-      submitButton.disabled = false;
+      submitButton.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+      submitButton.classList.remove('sending');
+      submitButton.classList.add('success');
+      
+      // Show success message
+      showFormSuccess('Thank you for your message! We will get back to you soon.');
+      
+      // Reset form after delay
+      setTimeout(() => {
+        contactForm.reset();
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
+        submitButton.classList.remove('success');
+        clearAllErrors();
+      }, 3000);
     }, 2000);
   });
+}
+
+// Field validation function
+function validateField(field) {
+  const value = field.value.trim();
+  const fieldName = field.name;
+  let isValid = true;
+  let errorMessage = '';
+  
+  // Remove existing error
+  clearFieldError(field);
+  
+  // Required field validation
+  if (field.hasAttribute('required') && !value) {
+    isValid = false;
+    errorMessage = 'This field is required.';
+  }
+  
+  // Email validation
+  if (fieldName === 'email' && value) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      isValid = false;
+      errorMessage = 'Please enter a valid email address.';
+    }
+  }
+  
+  // Phone validation (optional but if provided, should be valid)
+  if (fieldName === 'phone' && value) {
+    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+    if (!phoneRegex.test(value) || value.length < 10) {
+      isValid = false;
+      errorMessage = 'Please enter a valid phone number.';
+    }
+  }
+  
+  // Show error if invalid
+  if (!isValid) {
+    showFieldError(field, errorMessage);
+    field.classList.add('error');
+  } else {
+    field.classList.remove('error');
+    field.classList.add('valid');
+  }
+  
+  return isValid;
+}
+
+// Show field error
+function showFieldError(field, message) {
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'form-error';
+  errorDiv.textContent = message;
+  field.parentNode.appendChild(errorDiv);
+}
+
+// Clear field error
+function clearFieldError(field) {
+  const errorDiv = field.parentNode.querySelector('.form-error');
+  if (errorDiv) {
+    errorDiv.remove();
+  }
+  field.classList.remove('error', 'valid');
+}
+
+// Clear all errors
+function clearAllErrors() {
+  document.querySelectorAll('.form-error').forEach(error => error.remove());
+  document.querySelectorAll('.form-success-message').forEach(success => success.remove());
+}
+
+// Show form error
+function showFormError(message) {
+  const form = document.getElementById('contact-form');
+  const existingError = form.querySelector('.form-error-message');
+  if (existingError) existingError.remove();
+  
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'form-error form-error-message';
+  errorDiv.textContent = message;
+  form.insertBefore(errorDiv, form.firstChild);
+  
+  setTimeout(() => {
+    errorDiv.remove();
+  }, 5000);
+}
+
+// Show form success
+function showFormSuccess(message) {
+  const form = document.getElementById('contact-form');
+  const existingSuccess = form.querySelector('.form-success-message');
+  if (existingSuccess) existingSuccess.remove();
+  
+  const successDiv = document.createElement('div');
+  successDiv.className = 'form-success form-success-message';
+  successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+  form.insertBefore(successDiv, form.firstChild);
+}
+
+// Testimonials Carousel
+function setupTestimonialsCarousel() {
+  const testimonials = [
+    {
+      text: "Absolutely amazing work! My car seats look brand new. The quality of the leather and craftsmanship is outstanding. Highly recommend SHERIF-SIEGE-AUTO!",
+      author: "Ahmed Benali",
+      role: "Car Owner",
+      rating: 5
+    },
+    {
+      text: "Professional service from start to finish. They completed my motorcycle seat restoration in just 4 days. The attention to detail is incredible.",
+      author: "Fatima Alami",
+      role: "Motorcycle Enthusiast",
+      rating: 5
+    },
+    {
+      text: "Best upholstery shop in Taroudant! Fair prices, excellent quality, and they stand behind their work with a warranty. My interior looks like it came from the factory.",
+      author: "Mohammed Tazi",
+      role: "Business Owner",
+      rating: 5
+    },
+    {
+      text: "I've used their services multiple times for different vehicles. Consistent quality every time. The team is knowledgeable and friendly.",
+      author: "Aicha Bensaid",
+      role: "Fleet Manager",
+      rating: 5
+    },
+    {
+      text: "Fast turnaround, premium materials, and expert craftsmanship. They transformed my old car's interior into something beautiful. Worth every dirham!",
+      author: "Youssef Idrissi",
+      role: "Classic Car Collector",
+      rating: 5
+    }
+  ];
+
+  const track = document.getElementById('testimonial-track');
+  const indicators = document.getElementById('testimonial-indicators');
+  const prevBtn = document.getElementById('testimonial-prev');
+  const nextBtn = document.getElementById('testimonial-next');
+  
+  if (!track || !indicators) return;
+
+  let currentIndex = 0;
+  let autoRotateInterval;
+
+  // Create testimonial cards
+  testimonials.forEach((testimonial, index) => {
+    const card = document.createElement('div');
+    card.className = `testimonial-card ${index === 0 ? 'active' : ''}`;
+    card.setAttribute('role', 'tabpanel');
+    card.setAttribute('aria-hidden', index !== 0 ? 'true' : 'false');
+    
+    const stars = '★'.repeat(testimonial.rating);
+    
+    card.innerHTML = `
+      <div class="testimonial-content">
+        <div class="testimonial-rating" aria-label="${testimonial.rating} out of 5 stars">
+          ${stars.split('').map(() => '<span class="star" aria-hidden="true">★</span>').join('')}
+        </div>
+        <p class="testimonial-text">${testimonial.text}</p>
+        <div class="testimonial-author">${testimonial.author}</div>
+        <div class="testimonial-role">${testimonial.role}</div>
+      </div>
+    `;
+    
+    track.appendChild(card);
+    
+    // Create indicator
+    const indicator = document.createElement('button');
+    indicator.className = `indicator ${index === 0 ? 'active' : ''}`;
+    indicator.setAttribute('role', 'tab');
+    indicator.setAttribute('aria-label', `Go to testimonial ${index + 1}`);
+    indicator.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+    indicator.addEventListener('click', () => goToTestimonial(index));
+    indicators.appendChild(indicator);
+  });
+
+  function updateTestimonials() {
+    const cards = track.querySelectorAll('.testimonial-card');
+    const dots = indicators.querySelectorAll('.indicator');
+    
+    cards.forEach((card, index) => {
+      if (index === currentIndex) {
+        card.classList.add('active');
+        card.setAttribute('aria-hidden', 'false');
+      } else {
+        card.classList.remove('active');
+        card.setAttribute('aria-hidden', 'true');
+      }
+    });
+    
+    dots.forEach((dot, index) => {
+      if (index === currentIndex) {
+        dot.classList.add('active');
+        dot.setAttribute('aria-selected', 'true');
+      } else {
+        dot.classList.remove('active');
+        dot.setAttribute('aria-selected', 'false');
+      }
+    });
+  }
+
+  function goToTestimonial(index) {
+    currentIndex = index;
+    updateTestimonials();
+    resetAutoRotate();
+  }
+
+  function nextTestimonial() {
+    currentIndex = (currentIndex + 1) % testimonials.length;
+    updateTestimonials();
+    resetAutoRotate();
+  }
+
+  function prevTestimonial() {
+    currentIndex = (currentIndex - 1 + testimonials.length) % testimonials.length;
+    updateTestimonials();
+    resetAutoRotate();
+  }
+
+  function startAutoRotate() {
+    autoRotateInterval = setInterval(nextTestimonial, 5000);
+  }
+
+  function resetAutoRotate() {
+    clearInterval(autoRotateInterval);
+    startAutoRotate();
+  }
+
+  if (prevBtn) prevBtn.addEventListener('click', prevTestimonial);
+  if (nextBtn) nextBtn.addEventListener('click', nextTestimonial);
+
+  // Keyboard navigation
+  track.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') prevTestimonial();
+    if (e.key === 'ArrowRight') nextTestimonial();
+  });
+
+  // Start auto-rotate
+  startAutoRotate();
+  
+  // Pause on hover
+  const carousel = document.querySelector('.testimonials-carousel');
+  if (carousel) {
+    carousel.addEventListener('mouseenter', () => clearInterval(autoRotateInterval));
+    carousel.addEventListener('mouseleave', startAutoRotate);
+  }
 }
 
 // Scroll Effects
