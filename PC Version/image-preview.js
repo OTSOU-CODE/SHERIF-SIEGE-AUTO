@@ -136,25 +136,17 @@ function displayImageDetail(image) {
     
     <div class="detail-main">
       <div class="detail-left">
-        <div class="detail-variants">
-          <h3 class="variants-header">Available Variants</h3>
-          <div class="variant-list" id="variant-list">
-            ${createVariantsList(image.variants)}
-          </div>
-        </div>
-      </div>
-      
-      <div class="detail-center">
         <div class="detail-image-container">
           <img src="${image.src}" alt="${safeTitle}" title="${safeTitle}" id="main-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 1; visibility: visible;">
         </div>
         <div class="carousel-dots" id="detail-dots" role="tablist" aria-label="Variant Navigation"></div>
-        <div class="detail-description-container">
-          <p class="detail-description">${image.description}</p>
-          <div class="detail-features">
-            <span class="feature-tag">Premium Leather</span>
-            <span class="feature-tag">Custom Stitching</span>
-            <span class="feature-tag">Ergonomic Design</span>
+      </div>
+      
+      <div class="detail-center">
+        <div class="detail-variants">
+          <h3 class="variants-header">Available Variants</h3>
+          <div class="variant-list" id="variant-list">
+            ${createVariantsList(image.variants)}
           </div>
         </div>
       </div>
@@ -168,6 +160,15 @@ function displayImageDetail(image) {
             <span class="feature-tag">Custom Stitching</span>
             <span class="feature-tag">Ergonomic Design</span>
           </div>
+        </div>
+      </div>
+      
+      <div class="detail-description-container">
+        <p class="detail-description">${image.description}</p>
+        <div class="detail-features">
+          <span class="feature-tag">Premium Leather</span>
+          <span class="feature-tag">Custom Stitching</span>
+          <span class="feature-tag">Ergonomic Design</span>
         </div>
       </div>
     </div>

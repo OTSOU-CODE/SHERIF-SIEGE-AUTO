@@ -104,7 +104,7 @@
         
         
         <div class="hero-actions">
-          <a href="gallery.html" class="btn btn-primary">
+          <a href="gallery.html" class="btn btn-primary view-work-btn">
             <span>View Our Work</span>
             <i class="fas fa-arrow-right"></i>
           </a>
@@ -116,14 +116,18 @@
       </div>
       
       <div class="hero-visual">
-         <!-- Interactive Car Seat Showcase -->
-         <div class="seat-showcase">
-           <div class="seat-container">
-             <div class="car-seat-wrapper" role="img" aria-label="Premium car seat showcase">
-               <!-- Car seat images will be dynamically loaded here -->
-             </div>
-           </div>
-
+        <!-- Mobile Car Seat Showcase -->
+        <div class="seat-showcase">
+          <div class="seat-container">
+            <div class="car-seat-wrapper">
+              <!-- Car seat images will be dynamically loaded here -->
+            </div>
+          </div>
+        </div>
+        
+        <!-- Carousel Dots -->
+        <div class="carousel-dots" aria-label="Carousel Navigation" role="tablist">
+          <!-- Dots will be injected by script.js -->
         </div>
         
         <div class="floating-elements">
@@ -139,10 +143,14 @@
         </div>
       </div>
     </div>
-    
-    <div class="scroll-indicator">
-      <div class="scroll-line"></div>
-      <span>Scroll to explore</span>
+  </section>
+
+  <!-- Car Brands Section -->
+  <section class="car-brands-section">
+    <div class="car-brands-container">
+      <div class="car-brands-track">
+        <!-- Car brand logos will be dynamically loaded -->
+      </div>
     </div>
   </section>
 
@@ -254,111 +262,6 @@
     </div>
   </section>
 
-  <!-- Our Work Section -->
-  <section id="our-work" class="our-work">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Our Work</h2>
-        <p class="section-subline">Trusted by drivers across Morocco — see the transformations we deliver.</p>
-        <div class="section-underline"></div>
-      </div>
-
-      <!-- Filters -->
-      <div class="work-filters">
-        <button class="filter-tab active" data-filter="all">All Projects</button>
-        <button class="filter-tab" data-filter="car-seats">Car Seats</button>
-        <button class="filter-tab" data-filter="dashboards">Dashboards</button>
-        <button class="filter-tab" data-filter="bike-seats">Bike Seats</button>
-        <button class="filter-tab" data-filter="custom-stitching">Custom Stitching</button>
-      </div>
-
-      <!-- Stats Counter -->
-      <div class="work-stats">
-        <div class="stat-item">
-          <span class="stat-number" data-target="500">0</span>
-          <span class="stat-label">Interiors Restored</span>
-        </div>
-      </div>
-
-      <!-- Featured Project -->
-      <div class="featured-project">
-        <div class="featured-image">
-          <img src="component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png" alt="Featured Project - Premium Car Seat Restoration" loading="eager">
-          <div class="featured-badge">Featured Project</div>
-        </div>
-        <div class="featured-content">
-          <h3>BMW 3 Series Complete Interior Restoration</h3>
-          <p class="featured-description">Premium leather replacement, custom stitching, and dashboard restoration. Completed in 5 days with factory-quality results.</p>
-          <div class="featured-rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-text">Customer Favorite</span>
-          </div>
-          <div class="featured-quote">"Feels like a brand-new car!" — Ahmed B.</div>
-          <button class="btn btn-primary featured-cta" onclick="window.location.href='gallery.html'">View Full Project</button>
-        </div>
-      </div>
-
-      <!-- Projects Grid -->
-      <div class="projects-grid" id="projects-grid">
-        <!-- Project cards will be populated by JavaScript -->
-      </div>
-
-      <!-- Before & After Showcase -->
-      <div class="before-after-showcase">
-        <h3 class="showcase-title">Before & After Transformations</h3>
-        <div class="ba-slider-container">
-          <div class="ba-slider" id="ba-slider">
-            <!-- Before/After items will be populated by JavaScript -->
-          </div>
-          <div class="ba-controls">
-            <button class="ba-btn ba-prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
-            <button class="ba-btn ba-next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- CTA Section -->
-      <div class="work-cta">
-        <h3>Ready for your own transformation?</h3>
-        <button class="btn btn-primary btn-large" onclick="scrollToSection('contact')">
-          <span>Request a Free Quote</span>
-          <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section id="testimonials" class="testimonials">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Client Reviews</span>
-        <h2 class="section-title">What Our Clients Say</h2>
-        <p class="section-description">
-          Don't just take our word for it. See what our satisfied customers have to say about our work.
-        </p>
-      </div>
-      
-      <div class="testimonials-carousel">
-        <div class="testimonial-track" id="testimonial-track">
-          <!-- Testimonials will be populated by JavaScript -->
-        </div>
-        
-        <div class="carousel-controls">
-          <button class="carousel-btn carousel-prev" id="testimonial-prev" aria-label="Previous testimonial">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <button class="carousel-btn carousel-next" id="testimonial-next" aria-label="Next testimonial">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-        
-        <div class="carousel-indicators" id="testimonial-indicators" role="tablist">
-          <!-- Indicators will be populated by JavaScript -->
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Contact Section -->
   <section id="contact" class="contact">

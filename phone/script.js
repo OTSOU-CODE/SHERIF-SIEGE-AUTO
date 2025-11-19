@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupContactForm();
     detectComponentImages();
     initCarSeatCarousel();
+    setupCarBrands();
 });
 
 // Initialize DOM elements
@@ -743,6 +744,55 @@ if ('serviceWorker' in navigator) {
                 console.log('ServiceWorker registration failed');
             });
     });
+}
+
+// Car Brands Section Setup
+function setupCarBrands() {
+  const track = document.querySelector('.car-brands-track');
+  if (!track) return;
+
+  // List of car brand image filenames from component/Car Brands folder
+  const carBrands = [
+    'component/Car Brands/Sans-titre-1.png',
+    'component/Car Brands/Sans-titre-2.png',
+    'component/Car Brands/Sans-titre-3.png',
+    'component/Car Brands/Sans-titre-4.png',
+    'component/Car Brands/Sans-titre-5.png',
+    'component/Car Brands/Sans-titre-6.png',
+    'component/Car Brands/Sans-titre-7.png',
+    'component/Car Brands/Sans-titre-8.png',
+    'component/Car Brands/Sans-titre-9.png',
+    'component/Car Brands/Sans-titre-10.png',
+    'component/Car Brands/Sans-titre-11.png',
+    'component/Car Brands/Sans-titre-12.png',
+    'component/Car Brands/Sans-titre-13.png',
+    'component/Car Brands/Sans-titre-14.png'
+  ];
+
+  // Create brand items (duplicate for seamless loop)
+  const createBrandItems = (brands) => {
+    return brands.map(brand => {
+      const item = document.createElement('div');
+      item.className = 'car-brand-item';
+      const img = document.createElement('img');
+      img.src = brand;
+      const altText = brand.split('/').pop().replace('.png', '').replace('Sans-titre-', 'Brand ');
+      img.alt = altText;
+      img.onerror = function() {
+        // Hide broken images
+        this.style.display = 'none';
+      };
+      item.appendChild(img);
+      return item;
+    });
+  };
+
+  // Add brands twice for seamless scrolling
+  const items1 = createBrandItems(carBrands);
+  const items2 = createBrandItems(carBrands);
+  
+  items1.forEach(item => track.appendChild(item));
+  items2.forEach(item => track.appendChild(item));
 }
 
 // Export functions for global access
