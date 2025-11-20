@@ -226,69 +226,29 @@ function setupSeatInteractivity() {
   // Function to detect all images in component folder (fallback)
   async function detectComponentImages() {
     try {
-      // List of known images (fallback)
+      // List of known images
       const knownImages = [
-        'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png',
-        'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png',
-        'component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png',
-        'component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png',
-        'component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png'
+        'component/Gallery/Black-&-Orange.png',
+        'component/Gallery/Black-&-Red.png',
+        'component/Gallery/Blue.png',
+        'component/Gallery/Dark-blue-&-white.png',
+        'component/Gallery/Red.png'
       ];
       
-      // Try to detect additional images by testing common patterns
-      const additionalImages = [];
-      const basePath = 'component/';
-      
-      // Test for additional images with common naming patterns
-      for (let i = 1; i <= 10; i++) {
-        const testPaths = [
-          `${basePath}car-seat-${i}.png`,
-          `${basePath}car-seat-${i}.jpg`,
-          `${basePath}seat-${i}.png`,
-          `${basePath}seat-${i}.jpg`,
-          `${basePath}upholstery-${i}.png`,
-          `${basePath}upholstery-${i}.jpg`,
-          `${basePath}image-${i}.png`,
-          `${basePath}image-${i}.jpg`,
-          `${basePath}photo-${i}.png`,
-          `${basePath}photo-${i}.jpg`
-        ];
-        
-        for (const testPath of testPaths) {
-          try {
-            // Test if image exists by trying to load it
-            const img = new Image();
-            await new Promise((resolve, reject) => {
-              img.onload = () => {
-                if (!knownImages.includes(testPath) && !additionalImages.includes(testPath)) {
-                  additionalImages.push(testPath);
-                }
-                resolve();
-              };
-              img.onerror = () => reject();
-              img.src = testPath;
-            });
-          } catch (e) {
-            // Image doesn't exist, continue
-          }
-        }
-      }
-      
       // Combine known images with detected additional images
-      const allImages = [...knownImages, ...additionalImages];
+      const allImages = [...knownImages];
       
       console.log('Detected images:', allImages);
-      console.log('Additional images found:', additionalImages);
       
       return allImages;
     } catch (error) {
       console.log('Using fallback images');
       return [
-        'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png',
-        'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png',
-        'component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png',
-        'component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png',
-        'component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png'
+        'component/Gallery/Black-&-Orange.png',
+        'component/Gallery/Black-&-Red.png',
+        'component/Gallery/Blue.png',
+        'component/Gallery/Dark-blue-&-white.png',
+        'component/Gallery/Red.png'
       ];
     }
   }
@@ -464,7 +424,6 @@ function setupOurWorkSection() {
   animateProjectCards();
 }
 
-// Car Brands Section Setup
 function setupCarBrands() {
   const track = document.querySelector('.car-brands-track');
   if (!track) return;
@@ -519,7 +478,7 @@ const workProjects = [
     id: 1,
     title: "Mercedes-Benz E-Class Leather Restoration",
     description: "Premium black leather replacement, custom stitching, completed in 5 days.",
-    image: "component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png",
+    image: "https://i.imgur.com/sA1y4wG.jpeg",
     category: "car-seats",
     badge: "best-seller",
     badgeText: "Best Seller",
@@ -530,7 +489,7 @@ const workProjects = [
     id: 2,
     title: "BMW 5 Series Dashboard Restoration",
     description: "Complete dashboard refurbishment with premium materials and expert craftsmanship.",
-    image: "component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png",
+    image: "https://i.imgur.com/4JjE9tM.jpeg",
     category: "dashboards",
     badge: "customer-favorite",
     badgeText: "Customer Favorite",
@@ -541,7 +500,7 @@ const workProjects = [
     id: 3,
     title: "Honda Motorcycle Seat Custom Design",
     description: "Custom leather seat with ergonomic design, weather protection, 3-day turnaround.",
-    image: "component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png",
+    image: "https://i.imgur.com/QZbfNnF.jpeg",
     category: "bike-seats",
     badge: null,
     badgeText: null,
@@ -552,7 +511,7 @@ const workProjects = [
     id: 4,
     title: "Audi A4 Complete Interior Makeover",
     description: "Full interior restoration including seats, dashboard, and door panels.",
-    image: "component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png",
+    image: "https://i.imgur.com/jE6XhT7.jpeg",
     category: "car-seats",
     badge: "best-seller",
     badgeText: "Best Seller",
@@ -563,7 +522,7 @@ const workProjects = [
     id: 5,
     title: "Custom Stitching Pattern Design",
     description: "Unique diamond-stitch pattern on premium leather seats, personalized design.",
-    image: "component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png",
+    image: "https://i.imgur.com/g27w1H7.jpeg",
     category: "custom-stitching",
     badge: null,
     badgeText: null,
@@ -574,7 +533,7 @@ const workProjects = [
     id: 6,
     title: "Range Rover Sport Seat Upgrade",
     description: "Luxury leather upgrade with heating system installation, 7-day completion.",
-    image: "component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png",
+    image: "https://i.imgur.com/sA1y4wG.jpeg",
     category: "car-seats",
     badge: "customer-favorite",
     badgeText: "Customer Favorite",
@@ -586,18 +545,18 @@ const workProjects = [
 // Before/After Data
 const beforeAfterData = [
   {
-    before: "component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png",
-    after: "component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png",
+    before: "https://i.imgur.com/gI6n56a.jpeg",
+    after: "https://i.imgur.com/g27w1H7.jpeg",
     title: "BMW 3 Series Complete Restoration"
   },
   {
-    before: "component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png",
-    after: "component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png",
+    before: "https://i.imgur.com/n5b22tA.jpeg",
+    after: "https://i.imgur.com/4JjE9tM.jpeg",
     title: "Mercedes-Benz Interior Makeover"
   },
   {
-    before: "component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png",
-    after: "component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png",
+    before: "https://i.imgur.com/1x3pS5B.jpeg",
+    after: "https://i.imgur.com/jE6XhT7.jpeg",
     title: "Audi A4 Premium Upgrade"
   }
 ];

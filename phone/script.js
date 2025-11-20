@@ -495,48 +495,32 @@ let autoRotateTimer;
 
 async function detectComponentImages() {
     try {
-        const knownImages = [
-            'component/Gallery/Blue.png',
-            'component/Gallery/Red.png',
-            'component/Gallery/Black-&-Red.png',
-            'component/Gallery/Dark-blue-&-white.png',
-            'component/Gallery/Black-&-Orange.png'
-        ];
-
-        const allImages = [];
-        for (const imagePath of knownImages) {
-            try {
-                const img = new Image();
-                img.src = imagePath;
-                await new Promise((resolve, reject) => {
-                    img.onload = () => {
-                        allImages.push(imagePath);
-                        resolve();
-                    };
-                    img.onerror = () => {
-                        console.log(`Image not found: ${imagePath}`);
-                        resolve();
-                    };
-                });
-            } catch (error) {
-                console.log(`Error loading image: ${imagePath}`);
-            }
-        }
-
-        console.log('Loaded images:', allImages);
-        return allImages;
+      // List of known images
+      const knownImages = [
+        'component/Gallery/Black-&-Orange.png',
+        'component/Gallery/Black-&-Red.png',
+        'component/Gallery/Blue.png',
+        'component/Gallery/Dark-blue-&-white.png',
+        'component/Gallery/Red.png'
+      ];
+      
+      // Combine known images with detected additional images
+      const allImages = [...knownImages];
+      
+      console.log('Detected images:', allImages);
+      
+      return allImages;
     } catch (error) {
-        console.log('Using fallback images');
-        return [
-            'component/Gallery/Blue.png',
-            'component/Gallery/Red.png',
-            'component/Gallery/Black-&-Red.png',
-            'component/Gallery/Dark-blue-&-white.png',
-            'component/Gallery/Black-&-Orange.png'
-        ];
+      console.log('Using fallback images');
+      return [
+        'component/Gallery/Black-&-Orange.png',
+        'component/Gallery/Black-&-Red.png',
+        'component/Gallery/Blue.png',
+        'component/Gallery/Dark-blue-&-white.png',
+        'component/Gallery/Red.png'
+      ];
     }
-}
-
+  }
 async function initCarSeatCarousel() {
     seatImages = await detectComponentImages();
     
@@ -754,7 +738,7 @@ function setupCarBrands() {
   // List of car brand image filenames from component/Car Brands folder
   const carBrands = [
     'component/Car Brands/Sans-titre-1.png',
-    'component/Car Brands/Sans-titre-2.png',
+    'component-v/Car Brands/Sans-titre-2.png',
     'component/Car Brands/Sans-titre-3.png',
     'component/Car Brands/Sans-titre-4.png',
     'component/Car Brands/Sans-titre-5.png',

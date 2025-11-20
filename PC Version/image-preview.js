@@ -6,43 +6,46 @@
 // Gallery data for PC Version (aligned with PC gallery.html ordering)
 const galleryData = [
   {
-    src: 'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png',
+    src: 'https://i.imgur.com/g27w1H7.jpeg',
     title: 'Premium Black & Orange Design',
-    description: 'Sporty two-tone upholstery with vibrant orange accents on premium black leather. Features ergonomic side bolsters and precision stitching.',
+    description: 'Sporty two-tone upholstery with vibrant orange accents on premium black leather. Features ergonomic side bolsters and precision diamond stitching.',
     variants: [
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_02 PM-min.png', title: 'Main View' }
+      { src: 'https://i.imgur.com/g27w1H7.jpeg', title: 'Front View' },
+      { src: 'https://i.imgur.com/gI6n56a.jpeg', title: 'Side Bolster' },
+      { src: 'https://i.imgur.com/n5b22tA.jpeg', title: 'Stitching Detail' },
+      { src: 'https://i.imgur.com/1x3pS5B.jpeg', title: 'Headrest View' }
     ]
   },
   {
-    src: 'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png',
+    src: 'https://i.imgur.com/sA1y4wG.jpeg',
     title: 'Elegant Blue & Black Style',
     description: 'Sophisticated blue and black leather combination with modern design elements. Perfect blend of comfort and style.',
     variants: [
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_04 PM-min.png', title: 'Main View' }
+      { src: 'https://i.imgur.com/sA1y4wG.jpeg', title: 'Main View' }
     ]
   },
   {
-    src: 'component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png',
+    src: 'https://i.imgur.com/4JjE9tM.jpeg',
     title: 'Classic Red & Brown Finish',
     description: 'Traditional red and brown leather with premium stitching and classic automotive styling. Timeless elegance meets modern comfort.',
     variants: [
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_56_05 PM-min.png', title: 'Main View' }
+      { src: 'https://i.imgur.com/4JjE9tM.jpeg', title: 'Main View' }
     ]
   },
   {
-    src: 'component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png',
+    src: 'https://i.imgur.com/QZbfNnF.jpeg',
     title: 'Modern Yellow & Black Look',
     description: 'Bold yellow accents on sleek black leather create a striking contrast. Contemporary design with exceptional craftsmanship.',
     variants: [
-      { src: 'component/ChatGPT Image Oct 2, 2025, 08_58_29 PM-min.png', title: 'Main View' }
+      { src: 'https://i.imgur.com/QZbfNnF.jpeg', title: 'Main View' }
     ]
   },
   {
-    src: 'component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png',
+    src: 'https://i.imgur.com/jE6XhT7.jpeg',
     title: 'Luxury Green & Brown Design',
     description: 'Rich forest green with warm brown leather inserts. Premium materials and expert craftsmanship for the ultimate in automotive luxury.',
     variants: [
-      { src: 'component/ChatGPT Image Oct 2, 2025, 09_21_03 PM-min.png', title: 'Main View' }
+      { src: 'https://i.imgur.com/jE6XhT7.jpeg', title: 'Main View' }
     ]
   }
 ];
@@ -140,11 +143,8 @@ function displayImageDetail(image) {
           <img src="${image.src}" alt="${safeTitle}" title="${safeTitle}" id="main-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 1; visibility: visible;">
         </div>
         <div class="carousel-dots" id="detail-dots" role="tablist" aria-label="Variant Navigation"></div>
-      </div>
-      
-      <div class="detail-center">
         <div class="detail-variants">
-          <h3 class="variants-header">Available Variants</h3>
+          <h3 class="variants-header">Available Views</h3>
           <div class="variant-list" id="variant-list">
             ${createVariantsList(image.variants)}
           </div>

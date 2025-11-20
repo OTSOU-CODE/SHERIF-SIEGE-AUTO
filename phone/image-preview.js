@@ -6,56 +6,56 @@
 // Gallery data (shared with gallery-page.js)
 const galleryData = [
   {
-    src: 'component/Gallery/Blue.png',
+    src: 'https://i.imgur.com/g27w1H7.jpeg',
     title: 'Vibrant Blue Leather Upholstery',
     description: 'Sporty style in deep blue leather. Featuring strong side supports and quality stitching.',
     variants: [
-      { src: 'component/Gallery/Blue.png', title: 'Blue with Black Accents' },
-      { src: 'component/Gallery/Red.png', title: 'Blue with Red Accents' },
-      { src: 'component/Gallery/Black-&-Red.png', title: 'Blue with Sport Stitching' }
+      { src: 'https://i.imgur.com/g27w1H7.jpeg', title: 'Blue with Black Accents' },
+      { src: 'https://i.imgur.com/sA1y4wG.jpeg', title: 'Blue with Red Accents' },
+      { src: 'https://i.imgur.com/4JjE9tM.jpeg', title: 'Blue with Sport Stitching' }
     ]
   },
   {
-    src: 'component/Gallery/Red.png',
+    src: 'https://i.imgur.com/sA1y4wG.jpeg',
     title: 'Vibrant Red Sport Upholstery',
     description: 'Sporty Upholstery with Vibrant Red Leather. Features ergonomic side bolsters and precision stitching for ultimate comfort and style.',
     variants: [
-      { src: 'component/Gallery/Red.png', title: 'Solid Red' },
-      { src: 'component/Gallery/Black-&-Red.png', title: 'Red with Black Accents' },
-      { src: 'component/Gallery/Black-&-Orange.png', title: 'Red with Orange Details' }
+      { src: 'https://i.imgur.com/sA1y4wG.jpeg', title: 'Solid Red' },
+      { src: 'https://i.imgur.com/4JjE9tM.jpeg', title: 'Red with Black Accents' },
+      { src: 'https://i.imgur.com/jE6XhT7.jpeg', title: 'Red with Orange Details' }
     ]
   },
   {
-    src: 'component/Gallery/Black-&-Red.png',
+    src: 'https://i.imgur.com/4JjE9tM.jpeg',
     title: 'Two-Tone Sport Upholstery (Black/Red)',
     description: 'Two-Tone Sport Upholstery in Black & Red Leather. Features ergonomic side bolsters and precision stitching for a high-contrast, modern look.',
     variants: [
-      { src: 'component/Image Variaant/Black-&-Red-1.png', title: 'Right Side View' },
-      { src: 'component/Image Variaant/Black-&-Red-2.png', title: 'Left Side View' },
-      { src: 'component/Image Variaant/Black-&-Red-3.png', title: 'Right Side Car View' },
-      { src: 'component/Image Variaant/Black-&-Red-4.png', title: 'Left Side Back View' }
+      { src: 'https://i.imgur.com/g27w1H7.jpeg', title: 'Right Side View' },
+      { src: 'https://i.imgur.com/sA1y4wG.jpeg', title: 'Left Side View' },
+      { src: 'https://i.imgur.com/4JjE9tM.jpeg', title: 'Right Side Car View' },
+      { src: 'https://i.imgur.com/QZbfNnF.jpeg', title: 'Left Side Back View' }
     ]
   },
   {
-    src: 'component/Gallery/Dark-blue-&-white.png',
+    src: 'https://i.imgur.com/QZbfNnF.jpeg',
     title: 'Two-Tone Modern Look (Dark Blue/White)',
     description: 'Elegant Two-Tone Upholstery in Dark Blue & White Leather. Features ergonomic side bolsters and precision stitching for a classic, refined look.',
     variants: [
-      { src: 'component/Image Variaant/Dark-blue-&-white-1.png', title: 'Right Side View' },
-      { src: 'component/Image Variaant/Dark-blue-&-white-2.png', title: 'Left Side View' },
-      { src: 'component/Image Variaant/Dark-blue-&-white-3.png', title: 'Right Side Car View' },
-      { src: 'component/Image Variaant/Dark-blue-&-white-4.png', title: 'Left Side Back View' }
+      { src: 'https://i.imgur.com/jE6XhT7.jpeg', title: 'Right Side View' },
+      { src: 'https://i.imgur.com/g27w1H7.jpeg', title: 'Left Side View' },
+      { src: 'https://i.imgur.com/sA1y4wG.jpeg', title: 'Right Side Car View' },
+      { src: 'https://i.imgur.com/4JjE9tM.jpeg', title: 'Left Side Back View' }
     ]
   },
   {
-    src: 'component/Gallery/Black-&-Orange.png',
+    src: 'https://i.imgur.com/jE6XhT7.jpeg',
     title: 'Premium Two-Tone (Black/Orange) Upholstery',
     description: 'Premium Sport Upholstery with Dynamic Orange Inserts. Combines rich black leather with vibrant Orange, engineered with supportive bolsters for comfort.',
     variants: [
-      { src: 'component/Image Variaant/Black-&-Orange-1.png', title: 'Right Side View' },
-      { src: 'component/Image Variaant/Black-&-Orange-2.png', title: 'Left Side View' },
-      { src: 'component/Image Variaant/Black-&-Orange-3.png', title: 'Right Side Car View' },
-      { src: 'component/Image Variaant/Black-&-Orange-4.png', title: 'Left Side Back View' }
+      { src: 'https://i.imgur.com/QZbfNnF.jpeg', title: 'Right Side View' },
+      { src: 'https://i.imgur.com/jE6XhT7.jpeg', title: 'Left Side View' },
+      { src: 'https://i.imgur.com/g27w1H7.jpeg', title: 'Right Side Car View' },
+      { src: 'https://i.imgur.com/sA1y4wG.jpeg', title: 'Left Side Back View' }
     ]
   }
 ];
