@@ -16,11 +16,11 @@
   --success: #4CAF50;
   --error: #F44336;
   --warning: #FF9800;
-  
+
   /* Typography */
   --font-primary: 'Montserrat', sans-serif;
   --font-secondary: 'Playfair Display', serif;
-  
+
   /* Spacing */
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
@@ -28,23 +28,53 @@
   --spacing-lg: 2rem;
   --spacing-xl: 3rem;
   --spacing-xxl: 4rem;
-  
+
   /* Border Radius */
   --radius-sm: 0.5rem;
   --radius-md: 1rem;
   --radius-lg: 1.5rem;
   --radius-xl: 2rem;
-  
+
   /* Shadows */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
   --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.25);
-  
+
   /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
+}
+
+/* Scroll Animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  will-change: opacity, transform;
+}
+
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered delays */
+.animate-on-scroll:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.animate-on-scroll:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.animate-on-scroll:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.animate-on-scroll:nth-child(4) {
+  transition-delay: 0.4s;
 }
 
 /* Dark Theme Variables */
@@ -68,7 +98,7 @@
 }
 
 [data-theme="dark"] .hero-particles {
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
     radial-gradient(circle at 40% 40%, rgba(212, 175, 55, 0.08) 0%, transparent 50%);
@@ -107,7 +137,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-button, a, input, textarea, select {
+button,
+a,
+input,
+textarea,
+select {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -370,11 +404,25 @@ button, a, input, textarea, select {
 
 
 @keyframes shake {
-  0% { transform: translateX(-5px); }
-  25% { transform: translateX(5px); }
-  50% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-  100% { transform: translateX(-5px); }
+  0% {
+    transform: translateX(-5px);
+  }
+
+  25% {
+    transform: translateX(5px);
+  }
+
+  50% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
+
+  100% {
+    transform: translateX(-5px);
+  }
 }
 
 .btn-full {
@@ -438,7 +486,8 @@ button, a, input, textarea, select {
   transform: scale(1.02);
   transition: opacity 800ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: opacity, transform;
-  visibility: hidden; /* ensure non-active images are invisible */
+  visibility: hidden;
+  /* ensure non-active images are invisible */
   pointer-events: none;
   user-select: none;
 }
@@ -526,9 +575,12 @@ button, a, input, textarea, select {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
@@ -600,6 +652,7 @@ button, a, input, textarea, select {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -1033,33 +1086,33 @@ button, a, input, textarea, select {
   .container {
     padding: 0 var(--spacing-md);
   }
-  
+
   .hero-title {
     font-size: 3rem;
   }
-  
+
   .hero-actions {
     flex-direction: row;
     justify-content: center;
   }
-  
+
   .seat-container {
     width: 280px;
     height: 280px;
   }
-  
+
   .advantages-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .form-row {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .contact-info {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .footer-links {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1077,45 +1130,45 @@ button, a, input, textarea, select {
     display: flex;
     gap: var(--spacing-sm);
   }
-  
+
   .nav-toggle {
     display: none;
   }
-  
+
   .nav-link {
     padding: var(--spacing-xs) var(--spacing-sm);
     margin-bottom: 0;
   }
-  
+
   .hero-title {
     font-size: 3.5rem;
   }
-  
+
   .seat-container {
     width: 300px;
     height: 300px;
   }
-  
+
   .advantages-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .services-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .contact-content {
     grid-template-columns: 2fr 1fr;
   }
-  
+
   .contact-info {
     grid-template-columns: 1fr;
   }
-  
+
   .footer-content {
     grid-template-columns: 2fr 1fr;
   }
-  
+
   .footer-links {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1126,16 +1179,16 @@ button, a, input, textarea, select {
     max-width: 1200px;
     padding: 0 var(--spacing-lg);
   }
-  
+
   .hero-title {
     font-size: 4rem;
   }
-  
+
   .seat-container {
     width: 320px;
     height: 320px;
   }
-  
+
   .advantages-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1147,26 +1200,27 @@ button, a, input, textarea, select {
     min-height: 56px;
     font-size: 1.1rem;
   }
-  
+
   .nav-link {
     padding: var(--spacing-md);
   }
-  
+
   .advantage-card:hover,
   .service-card:hover,
   .info-card:hover {
     transform: none;
   }
-  
+
   .btn:hover {
     transform: none;
   }
 }
 
 /* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
   .hero-background {
-    background-image: 
+    background-image:
       radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
       radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 50%);
   }
@@ -1275,6 +1329,7 @@ button, a, input, textarea, select {
 
 /* Print styles */
 @media print {
+
   .navbar,
   .theme-switcher,
   .back-to-top,
@@ -1282,22 +1337,22 @@ button, a, input, textarea, select {
   .floating-elements {
     display: none !important;
   }
-  
+
   .hero {
     min-height: auto;
     padding: var(--spacing-lg) 0;
   }
-  
+
   .section-header {
     page-break-after: avoid;
   }
-  
+
   .legal-content {
     box-shadow: none;
     border: none;
     padding: 0;
   }
-  
+
   .legal-section {
     page-break-inside: avoid;
   }

@@ -66,7 +66,7 @@ let currentVariantIndex = 0;
 let dotsContainerDetail = null;
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   initImageDetail();
   setupContactForm();
 });
@@ -103,13 +103,13 @@ function initImageDetail() {
   setTimeout(() => {
     const mainImg = document.getElementById('main-image');
     if (mainImg) {
-      mainImg.onerror = function() {
+      mainImg.onerror = function () {
         console.log(`Main image failed to load: ${currentImage.src}`);
         showEmptyState();
       };
       // Make main image clickable to enlarge
       mainImg.style.cursor = 'pointer';
-      mainImg.addEventListener('click', function() {
+      mainImg.addEventListener('click', function () {
         openImageModal(this.src, currentImage.title);
       });
     }
@@ -192,25 +192,25 @@ function createVariantsList(variants) {
 // Setup variant selection
 function setupVariants() {
   const variantItems = document.querySelectorAll('.variant-item');
-  
+
   variantItems.forEach((item, index) => {
-    item.addEventListener('click', function() {
+    item.addEventListener('click', function () {
       setVariantIndex(index);
     });
 
     // Add touch feedback
-    item.addEventListener('touchstart', function() {
+    item.addEventListener('touchstart', function () {
       this.style.transform = 'scale(0.98)';
     });
-    
-    item.addEventListener('touchend', function() {
+
+    item.addEventListener('touchend', function () {
       this.style.transform = '';
     });
 
     // Add error handling for variant thumbnails
     const thumbnailImg = item.querySelector('.variant-thumbnail img');
     if (thumbnailImg && currentImage) {
-      thumbnailImg.onerror = function() {
+      thumbnailImg.onerror = function () {
         console.log(`Variant thumbnail failed to load: ${this.src}, using main image`);
         this.src = currentImage.src;
       };
@@ -219,7 +219,7 @@ function setupVariants() {
       thumbnailImg.title = deriveImageTitle(v && v.title, v && v.src);
       // Make variant thumbnails clickable to enlarge
       thumbnailImg.style.cursor = 'pointer';
-      thumbnailImg.addEventListener('click', function(e) {
+      thumbnailImg.addEventListener('click', function (e) {
         e.stopPropagation(); // Prevent triggering variant selection
         const variant = currentImage.variants[index];
         if (variant) {
@@ -302,7 +302,7 @@ function setVariantIndex(index) {
   nextImg.style.visibility = 'visible';
 
   // Add error handling - fallback to main image if variant fails
-  nextImg.onerror = function() {
+  nextImg.onerror = function () {
     console.log(`Variant image failed to load: ${variant.src}, using main image`);
     if (currentImage && currentImage.src) {
       this.src = currentImage.src;
@@ -340,13 +340,13 @@ function setVariantIndex(index) {
     nextImg.style.zIndex = '1';
     // Make the new main image clickable
     nextImg.style.cursor = 'pointer';
-    nextImg.onclick = function() {
+    nextImg.onclick = function () {
       openImageModal(this.src, deriveImageTitle(variant.title || currentImage.title, this.src));
     };
   };
 
   nextImg.addEventListener('transitionend', removeOldImage, { once: true });
-  
+
   // Fallback: remove old image after transition time
   setTimeout(() => {
     if (currentImg && currentImg.parentNode && currentImg.id === 'main-image') {
@@ -363,7 +363,7 @@ function setVariantIndex(index) {
       nextImg.id = 'main-image';
       nextImg.style.zIndex = '1';
       nextImg.style.cursor = 'pointer';
-      nextImg.onclick = function() {
+      nextImg.onclick = function () {
         openImageModal(this.src, deriveImageTitle(variant.title || currentImage.title, this.src));
       };
     }
@@ -387,7 +387,7 @@ function setupDetailSwipe() {
   let hasMoved = false;
 
   // Add click handler to container for opening modal
-  container.addEventListener('click', function(e) {
+  container.addEventListener('click', function (e) {
     // Only open modal if no swipe/drag occurred
     if (!hasMoved && !isDragging) {
       const mainImg = document.getElementById('main-image');
@@ -398,7 +398,7 @@ function setupDetailSwipe() {
   });
 
   // Touch events
-  container.addEventListener('touchstart', function(e) {
+  container.addEventListener('touchstart', function (e) {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     isDragging = false;
@@ -406,7 +406,7 @@ function setupDetailSwipe() {
     hasMoved = false;
   }, { passive: true });
 
-  container.addEventListener('touchmove', function(e) {
+  container.addEventListener('touchmove', function (e) {
     if (!startX || !startY) return;
     const diffX = startX - e.touches[0].clientX;
     const diffY = startY - e.touches[0].clientY;
@@ -425,7 +425,7 @@ function setupDetailSwipe() {
     }
   }, { passive: false });
 
-  container.addEventListener('touchend', function(e) {
+  container.addEventListener('touchend', function (e) {
     if (!isDragging || !startX) {
       startX = 0; startY = 0; isDragging = false; isHorizontal = false; hasMoved = false; return;
     }
@@ -448,7 +448,7 @@ function setupDetailSwipe() {
   let mouseStartX = 0;
   let mouseStartY = 0;
 
-  container.addEventListener('mousedown', function(e) {
+  container.addEventListener('mousedown', function (e) {
     e.preventDefault(); // prevent default image drag ghost
     mouseDown = true;
     mouseStartX = e.clientX;
@@ -458,7 +458,7 @@ function setupDetailSwipe() {
     hasMoved = false;
   });
 
-  container.addEventListener('mousemove', function(e) {
+  container.addEventListener('mousemove', function (e) {
     if (!mouseDown) return;
     const diffX = mouseStartX - e.clientX;
     const diffY = mouseStartY - e.clientY;
@@ -473,7 +473,7 @@ function setupDetailSwipe() {
     }
   });
 
-  container.addEventListener('mouseup', function(e) {
+  container.addEventListener('mouseup', function (e) {
     if (!mouseDown || !isDragging) {
       mouseDown = false; isDragging = false; isHorizontal = false; hasMoved = false; return;
     }
@@ -489,12 +489,12 @@ function setupDetailSwipe() {
     mouseDown = false; isDragging = false; isHorizontal = false; hasMoved = false;
   });
 
-  container.addEventListener('mouseleave', function() {
+  container.addEventListener('mouseleave', function () {
     mouseDown = false; isDragging = false; isHorizontal = false; hasMoved = false;
   });
 
   // Prevent native dragstart on images inside
-  container.addEventListener('dragstart', function(e) {
+  container.addEventListener('dragstart', function (e) {
     e.preventDefault();
   });
 }
@@ -521,9 +521,9 @@ function setupContactForm() {
   const contactForm = document.getElementById('contact-form');
   if (!contactForm) return;
 
-  contactForm.addEventListener('submit', function(e) {
+  contactForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    
+
     // Get form data
     const formData = new FormData(contactForm);
     const data = {
@@ -554,7 +554,7 @@ function setupContactForm() {
 
     // Show success message
     showFormSuccess();
-    
+
     // Reset form
     contactForm.reset();
   });
@@ -662,17 +662,17 @@ function openImageModal(imageSrc, imageTitle) {
     z-index: 10001;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   `;
-  closeBtn.onmouseenter = function() {
+  closeBtn.onmouseenter = function () {
     this.style.background = 'rgba(255, 255, 255, 1)';
     this.style.transform = 'scale(1.15)';
     this.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.4)';
   };
-  closeBtn.onmouseleave = function() {
+  closeBtn.onmouseleave = function () {
     this.style.background = 'rgba(255, 255, 255, 0.9)';
     this.style.transform = 'scale(1)';
     this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
   };
-  closeBtn.onclick = function(e) {
+  closeBtn.onclick = function (e) {
     e.stopPropagation();
     closeImageModal(modal);
   };
@@ -738,14 +738,14 @@ function openImageModal(imageSrc, imageTitle) {
   });
 
   // Close on background click
-  modal.addEventListener('click', function(e) {
+  modal.addEventListener('click', function (e) {
     if (e.target === modal) {
       closeImageModal(modal);
     }
   });
 
   // Close on ESC key
-  const escHandler = function(e) {
+  const escHandler = function (e) {
     if (e.key === 'Escape') {
       closeImageModal(modal);
       document.removeEventListener('keydown', escHandler);
@@ -754,7 +754,7 @@ function openImageModal(imageSrc, imageTitle) {
   document.addEventListener('keydown', escHandler);
 
   // Close on image load error
-  modalImage.onerror = function() {
+  modalImage.onerror = function () {
     console.log(`Modal image failed to load: ${imageSrc}`);
     closeImageModal(modal);
   };

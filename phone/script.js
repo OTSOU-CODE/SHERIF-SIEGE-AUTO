@@ -8,7 +8,7 @@ let backToTopBtn;
 let themeToggleBtn;
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializeElements();
     setupEventListeners();
     initNewFeatures();
@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     detectComponentImages();
     initCarSeatCarousel();
     setupCarBrands();
+    setupScrollAnimations();
 });
 
 // Initialize DOM elements
@@ -35,8 +36,8 @@ function setupEventListeners() {
     }
 
     // Close mobile menu when clicking outside
-    document.addEventListener('click', function(e) {
-        if (navMenu && navMenu.classList.contains('active') && 
+    document.addEventListener('click', function (e) {
+        if (navMenu && navMenu.classList.contains('active') &&
             !navToggle.contains(e.target) && !navMenu.contains(e.target)) {
             closeMobileMenu();
         }
@@ -90,7 +91,7 @@ function closeMobileMenu() {
 function handleScroll() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-    
+
     // Navbar background
     if (navbar) {
         if (scrollTop > 100) {
@@ -117,14 +118,14 @@ function handleScroll() {
 function updateActiveNavLink() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     let currentSection = '';
-    
+
     sections.forEach(section => {
         const sectionTop = section.offsetTop - 100;
         const sectionHeight = section.offsetHeight;
-        
-        if (window.pageYOffset >= sectionTop && 
+
+        if (window.pageYOffset >= sectionTop &&
             window.pageYOffset < sectionTop + sectionHeight) {
             currentSection = section.getAttribute('id');
         }
@@ -162,13 +163,13 @@ function scrollToTop() {
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
+
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
-    
+
     // Update button icon
     const icon = themeToggleBtn.querySelector('i');
-    
+
     if (newTheme === 'dark') {
         icon.className = 'fas fa-sun';
     } else {
@@ -180,10 +181,10 @@ function toggleTheme() {
 function loadTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
-    
+
     if (themeToggleBtn) {
         const icon = themeToggleBtn.querySelector('i');
-        
+
         if (savedTheme === 'dark') {
             icon.className = 'fas fa-sun';
         } else {
@@ -199,13 +200,13 @@ loadTheme();
 function setupTouchEvents() {
     // Add touch feedback to buttons and cards
     const interactiveElements = document.querySelectorAll('.btn, .advantage-card, .service-card, .info-card, .nav-link');
-    
+
     interactiveElements.forEach(element => {
-        element.addEventListener('touchstart', function() {
+        element.addEventListener('touchstart', function () {
             this.style.transform = 'scale(0.98)';
         });
-        
-        element.addEventListener('touchend', function() {
+
+        element.addEventListener('touchend', function () {
             this.style.transform = '';
         });
     });
@@ -225,14 +226,14 @@ function setupSwipeGestures() {
     let isHorizontal = false;
 
     // Touch events for mobile
-    carSeatWrapper.addEventListener('touchstart', function(e) {
+    carSeatWrapper.addEventListener('touchstart', function (e) {
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         isDragging = false;
         isHorizontal = false;
     }, { passive: true });
 
-    carSeatWrapper.addEventListener('touchmove', function(e) {
+    carSeatWrapper.addEventListener('touchmove', function (e) {
         if (!startX || !startY) return;
 
         const diffX = startX - e.touches[0].clientX;
@@ -248,7 +249,7 @@ function setupSwipeGestures() {
         }
     }, { passive: false });
 
-    carSeatWrapper.addEventListener('touchend', function(e) {
+    carSeatWrapper.addEventListener('touchend', function (e) {
         if (!isDragging || !startX) {
             startX = 0;
             startY = 0;
@@ -281,7 +282,7 @@ function setupSwipeGestures() {
     let mouseStartX = 0;
     let mouseStartY = 0;
 
-    carSeatWrapper.addEventListener('mousedown', function(e) {
+    carSeatWrapper.addEventListener('mousedown', function (e) {
         mouseDown = true;
         mouseStartX = e.clientX;
         mouseStartY = e.clientY;
@@ -289,7 +290,7 @@ function setupSwipeGestures() {
         isHorizontal = false;
     });
 
-    carSeatWrapper.addEventListener('mousemove', function(e) {
+    carSeatWrapper.addEventListener('mousemove', function (e) {
         if (!mouseDown) return;
 
         const diffX = mouseStartX - e.clientX;
@@ -304,7 +305,7 @@ function setupSwipeGestures() {
         }
     });
 
-    carSeatWrapper.addEventListener('mouseup', function(e) {
+    carSeatWrapper.addEventListener('mouseup', function (e) {
         if (!mouseDown || !isDragging) {
             mouseDown = false;
             isDragging = false;
@@ -330,7 +331,7 @@ function setupSwipeGestures() {
         isHorizontal = false;
     });
 
-    carSeatWrapper.addEventListener('mouseleave', function() {
+    carSeatWrapper.addEventListener('mouseleave', function () {
         mouseDown = false;
         isDragging = false;
         isHorizontal = false;
@@ -342,7 +343,7 @@ function setupContactForm() {
     const contactForm = document.getElementById('contact-form');
     if (!contactForm) return;
 
-    contactForm.addEventListener('submit', function(e) {
+    contactForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const formData = new FormData(contactForm);
@@ -385,22 +386,22 @@ function setupContactForm() {
                 source: 'SHERIF-SIEGE-AUTO Mobile Website'
             })
         })
-        .then(response => {
-            if (response.ok) {
-                showNotification('Thank you for your message. We will contact you very soon!', 'success');
-                contactForm.reset();
-            } else {
-                throw new Error('Failed to send message');
-            }
-        })
-        .catch(error => {
-            console.error('Error sending form data:', error);
-            showNotification('There was an error sending your message. Please try again or call us directly.', 'error');
-        })
-        .finally(() => {
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
-        });
+            .then(response => {
+                if (response.ok) {
+                    showNotification('Thank you for your message. We will contact you very soon!', 'success');
+                    contactForm.reset();
+                } else {
+                    throw new Error('Failed to send message');
+                }
+            })
+            .catch(error => {
+                console.error('Error sending form data:', error);
+                showNotification('There was an error sending your message. Please try again or call us directly.', 'error');
+            })
+            .finally(() => {
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            });
     });
 }
 
@@ -495,35 +496,35 @@ let autoRotateTimer;
 
 async function detectComponentImages() {
     try {
-      // List of known images
-      const knownImages = [
-        'component/Gallery/Black-&-Orange.png',
-        'component/Gallery/Black-&-Red.png',
-        'component/Gallery/Blue.png',
-        'component/Gallery/Dark-blue-&-white.png',
-        'component/Gallery/Red.png'
-      ];
-      
-      // Combine known images with detected additional images
-      const allImages = [...knownImages];
-      
-      console.log('Detected images:', allImages);
-      
-      return allImages;
+        // List of known images
+        const knownImages = [
+            'component/Gallery/Black-&-Orange.png',
+            'component/Gallery/Black-&-Red.png',
+            'component/Gallery/Blue.png',
+            'component/Gallery/Dark-blue-&-white.png',
+            'component/Gallery/Red.png'
+        ];
+
+        // Combine known images with detected additional images
+        const allImages = [...knownImages];
+
+        console.log('Detected images:', allImages);
+
+        return allImages;
     } catch (error) {
-      console.log('Using fallback images');
-      return [
-        'component/Gallery/Black-&-Orange.png',
-        'component/Gallery/Black-&-Red.png',
-        'component/Gallery/Blue.png',
-        'component/Gallery/Dark-blue-&-white.png',
-        'component/Gallery/Red.png'
-      ];
+        console.log('Using fallback images');
+        return [
+            'component/Gallery/Black-&-Orange.png',
+            'component/Gallery/Black-&-Red.png',
+            'component/Gallery/Blue.png',
+            'component/Gallery/Dark-blue-&-white.png',
+            'component/Gallery/Red.png'
+        ];
     }
-  }
+}
 async function initCarSeatCarousel() {
     seatImages = await detectComponentImages();
-    
+
     if (seatImages.length === 0) {
         console.log('No car seat images found');
         return;
@@ -546,14 +547,14 @@ async function initCarSeatCarousel() {
 
 function nextCarSeatImage() {
     if (seatImages.length === 0) return;
-    
+
     currentSeatIndex = (currentSeatIndex + 1) % seatImages.length;
     updateCarSeatImage();
 }
 
 function prevCarSeatImage() {
     if (seatImages.length === 0) return;
-    
+
     currentSeatIndex = (currentSeatIndex - 1 + seatImages.length) % seatImages.length;
     updateCarSeatImage();
 }
@@ -645,7 +646,7 @@ function initNewFeatures() {
     // Add loading states to buttons
     const buttons = document.querySelectorAll('.btn');
     buttons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             if (!this.disabled) {
                 this.style.transform = 'scale(0.98)';
                 setTimeout(() => {
@@ -659,11 +660,11 @@ function initNewFeatures() {
     if (!('ontouchstart' in window)) {
         const cards = document.querySelectorAll('.advantage-card, .service-card, .info-card');
         cards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
+            card.addEventListener('mouseenter', function () {
                 this.style.transform = 'translateY(-5px)';
             });
-            
-            card.addEventListener('mouseleave', function() {
+
+            card.addEventListener('mouseleave', function () {
                 this.style.transform = '';
             });
         });
@@ -709,7 +710,7 @@ window.addEventListener('scroll', optimizedScrollHandler);
 
 // Performance monitoring
 if ('performance' in window) {
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         setTimeout(() => {
             const perfData = performance.getEntriesByType('navigation')[0];
             console.log('Page load time:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
@@ -719,12 +720,12 @@ if ('performance' in window) {
 
 // Service Worker registration for PWA capabilities
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         navigator.serviceWorker.register('/sw.js')
-            .then(function(registration) {
+            .then(function (registration) {
                 console.log('ServiceWorker registration successful');
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log('ServiceWorker registration failed');
             });
     });
@@ -732,54 +733,75 @@ if ('serviceWorker' in navigator) {
 
 // Car Brands Section Setup
 function setupCarBrands() {
-  const track = document.querySelector('.car-brands-track');
-  if (!track) return;
+    const track = document.querySelector('.car-brands-track');
+    if (!track) return;
 
-  // List of car brand image filenames from component/Car Brands folder
-  const carBrands = [
-    'component/Car Brands/Sans-titre-1.png',
-    'component-v/Car Brands/Sans-titre-2.png',
-    'component/Car Brands/Sans-titre-3.png',
-    'component/Car Brands/Sans-titre-4.png',
-    'component/Car Brands/Sans-titre-5.png',
-    'component/Car Brands/Sans-titre-6.png',
-    'component/Car Brands/Sans-titre-7.png',
-    'component/Car Brands/Sans-titre-8.png',
-    'component/Car Brands/Sans-titre-9.png',
-    'component/Car Brands/Sans-titre-10.png',
-    'component/Car Brands/Sans-titre-11.png',
-    'component/Car Brands/Sans-titre-12.png',
-    'component/Car Brands/Sans-titre-13.png',
-    'component/Car Brands/Sans-titre-14.png'
-  ];
+    // List of car brand image filenames from component/Car Brands folder
+    const carBrands = [
+        'component/Car Brands/Sans-titre-1.png',
+        'component-v/Car Brands/Sans-titre-2.png',
+        'component/Car Brands/Sans-titre-3.png',
+        'component/Car Brands/Sans-titre-4.png',
+        'component/Car Brands/Sans-titre-5.png',
+        'component/Car Brands/Sans-titre-6.png',
+        'component/Car Brands/Sans-titre-7.png',
+        'component/Car Brands/Sans-titre-8.png',
+        'component/Car Brands/Sans-titre-9.png',
+        'component/Car Brands/Sans-titre-10.png',
+        'component/Car Brands/Sans-titre-11.png',
+        'component/Car Brands/Sans-titre-12.png',
+        'component/Car Brands/Sans-titre-13.png',
+        'component/Car Brands/Sans-titre-14.png'
+    ];
 
-  // Create brand items (duplicate for seamless loop)
-  const createBrandItems = (brands) => {
-    return brands.map(brand => {
-      const item = document.createElement('div');
-      item.className = 'car-brand-item';
-      const img = document.createElement('img');
-      img.src = brand;
-      const altText = brand.split('/').pop().replace('.png', '').replace('Sans-titre-', 'Brand ');
-      img.alt = altText;
-      img.onerror = function() {
-        // Hide broken images
-        this.style.display = 'none';
-      };
-      item.appendChild(img);
-      return item;
-    });
-  };
+    // Create brand items (duplicate for seamless loop)
+    const createBrandItems = (brands) => {
+        return brands.map(brand => {
+            const item = document.createElement('div');
+            item.className = 'car-brand-item';
+            const img = document.createElement('img');
+            img.src = brand;
+            const altText = brand.split('/').pop().replace('.png', '').replace('Sans-titre-', 'Brand ');
+            img.alt = altText;
+            img.onerror = function () {
+                // Hide broken images
+                this.style.display = 'none';
+            };
+            item.appendChild(img);
+            return item;
+        });
+    };
 
-  // Add brands twice for seamless scrolling
-  const items1 = createBrandItems(carBrands);
-  const items2 = createBrandItems(carBrands);
-  
-  items1.forEach(item => track.appendChild(item));
-  items2.forEach(item => track.appendChild(item));
+    // Add brands twice for seamless scrolling
+    const items1 = createBrandItems(carBrands);
+    const items2 = createBrandItems(carBrands);
+
+    items1.forEach(item => track.appendChild(item));
+    items2.forEach(item => track.appendChild(item));
 }
 
 // Export functions for global access
 window.scrollToSection = scrollToSection;
 window.nextCarSeatImage = nextCarSeatImage;
 window.prevCarSeatImage = prevCarSeatImage;
+
+// Scroll Animations
+function setupScrollAnimations() {
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target); // Only animate once
+      }
+    });
+  }, observerOptions);
+
+  const animatedElements = document.querySelectorAll('.animate-on-scroll');
+  animatedElements.forEach(el => observer.observe(el));
+}
