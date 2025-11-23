@@ -16,7 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
     detectComponentImages();
     initCarSeatCarousel();
     setupCarBrands();
+    setupCarBrands();
     setupScrollAnimations();
+    setupFileUpload();
 });
 
 // Initialize DOM elements
@@ -343,11 +345,12 @@ function setupContactForm() {
     const contactForm = document.getElementById('contact-form');
     if (!contactForm) return;
 
-    contactForm.addEventListener('submit', function (e) {
+    contactForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const formData = new FormData(contactForm);
         const data = Object.fromEntries(formData);
+        const fileInput = document.getElementById('file-upload');
 
         // Validation
         if (!data.name || !data.email || !data.message) {
@@ -368,15 +371,9 @@ function setupContactForm() {
         submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         submitButton.disabled = true;
 
-        // Send to webhook
-        const webhookUrl = 'http://localhost:5678/webhook/f1a3160d-f1b7-46ae-bb3b-700ba002ea43';
-
-        fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        try {
+            // Prepare payload
+            const payload = {
                 name: data.name,
                 email: data.email,
                 phone: data.phone || '',
@@ -384,24 +381,50 @@ function setupContactForm() {
                 message: data.message,
                 timestamp: new Date().toISOString(),
                 source: 'SHERIF-SIEGE-AUTO Mobile Website'
-            })
-        })
-            .then(response => {
-                if (response.ok) {
-                    showNotification('Thank you for your message. We will contact you very soon!', 'success');
-                    contactForm.reset();
-                } else {
-                    throw new Error('Failed to send message');
+            };
+
+            // Handle file upload if present
+            if (fileInput && fileInput.files.length > 0) {
+                try {
+                    const base64File = await toBase64(fileInput.files[0]);
+                    payload.file = base64File;
+                    payload.fileName = fileInput.files[0].name;
+                } catch (fileError) {
+                    console.error('Error processing file:', fileError);
+                    // Continue without file if processing fails
                 }
-            })
-            .catch(error => {
-                console.error('Error sending form data:', error);
-                showNotification('There was an error sending your message. Please try again or call us directly.', 'error');
-            })
-            .finally(() => {
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
+            }
+
+            // Send to webhook
+            const webhookUrl = 'http://localhost:5678/webhook/f1a3160d-f1b7-46ae-bb3b-700ba002ea43';
+
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
             });
+
+            if (response.ok) {
+                showNotification('Thank you for your message. We will contact you very soon!', 'success');
+                contactForm.reset();
+                // Reset file input display
+                const fileNameDisplay = document.getElementById('file-name');
+                if (fileNameDisplay) {
+                    fileNameDisplay.textContent = 'No file chosen';
+                    fileNameDisplay.classList.remove('has-file');
+                }
+            } else {
+                throw new Error('Failed to send message');
+            }
+        } catch (error) {
+            console.error('Error sending form data:', error);
+            showNotification('There was an error sending your message. Please try again or call us directly.', 'error');
+        } finally {
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+        }
     });
 }
 
@@ -739,7 +762,7 @@ function setupCarBrands() {
     // List of car brand image filenames from component/Car Brands folder
     const carBrands = [
         'component/Car Brands/Sans-titre-1.png',
-        'component-v/Car Brands/Sans-titre-2.png',
+        'component/Car Brands/Sans-titre-2.png',
         'component/Car Brands/Sans-titre-3.png',
         'component/Car Brands/Sans-titre-4.png',
         'component/Car Brands/Sans-titre-5.png',
@@ -786,22 +809,109 @@ window.nextCarSeatImage = nextCarSeatImage;
 window.prevCarSeatImage = prevCarSeatImage;
 
 // Scroll Animations
+// Scroll Animations
 function setupScrollAnimations() {
-  const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-  };
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
 
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target); // Only animate once
-      }
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target); // Only animate once
+            }
+        });
+    }, observerOptions);
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach(el => observer.observe(el));
+}
+
+// File Upload Setup
+function setupFileUpload() {
+    const fileInput = document.getElementById('file-upload');
+    const fileNameDisplay = document.getElementById('file-name');
+    const wrapper = document.querySelector('.file-upload-wrapper');
+    const label = document.querySelector('.file-upload-label');
+
+    if (fileInput && fileNameDisplay && wrapper) {
+        // Make the entire wrapper clickable
+        wrapper.addEventListener('click', function (e) {
+            // Prevent double-triggering if clicking the label or input directly
+            if (e.target !== fileInput && !e.target.closest('label')) {
+                fileInput.click();
+            }
+        });
+
+        fileInput.addEventListener('change', function (e) {
+            console.log('File input changed:', this.files);
+            if (this.files && this.files.length > 0) {
+                const file = this.files[0];
+                fileNameDisplay.textContent = file.name;
+                wrapper.classList.add('has-file');
+
+                // Create or update preview
+                if (file.type.startsWith('image/')) {
+                    wrapper.classList.add('has-image');
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        wrapper.style.backgroundImage = `url('${e.target.result}')`;
+                        wrapper.style.backgroundSize = 'cover';
+                        wrapper.style.backgroundPosition = 'center';
+
+                        // Update label for better visibility over image
+                        if (label) {
+                            label.innerHTML = '<i class="fas fa-sync-alt"></i><span>Change</span>';
+                            label.style.background = 'rgba(255, 255, 255, 0.9)';
+                            label.style.padding = '6px 12px';
+                            label.style.borderRadius = '20px';
+                            label.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+                            label.style.color = 'var(--primary-dark)';
+                            label.style.fontWeight = '600';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Non-image file
+                    wrapper.classList.remove('has-image');
+                    wrapper.style.backgroundImage = 'none';
+                    if (label) {
+                        label.innerHTML = '<i class="fas fa-file-check"></i><span>File Selected</span>';
+                        label.style.background = 'transparent';
+                        label.style.padding = '0';
+                        label.style.boxShadow = 'none';
+                        label.style.color = 'var(--success)';
+                    }
+                }
+            } else {
+                // Reset state
+                fileNameDisplay.textContent = 'No file chosen';
+                wrapper.classList.remove('has-file');
+                wrapper.classList.remove('has-image');
+                wrapper.style.backgroundImage = 'none';
+
+                if (label) {
+                    label.innerHTML = '<i class="fas fa-cloud-upload-alt"></i><span>Choose File</span>';
+                    label.style.background = 'transparent';
+                    label.style.padding = '0';
+                    label.style.boxShadow = 'none';
+                    label.style.color = 'var(--text-secondary)';
+                    label.style.fontWeight = 'normal';
+                }
+            }
+        });
+    }
+}
+
+// Helper to convert file to Base64
+function toBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
     });
-  }, observerOptions);
-
-  const animatedElements = document.querySelectorAll('.animate-on-scroll');
-  animatedElements.forEach(el => observer.observe(el));
 }

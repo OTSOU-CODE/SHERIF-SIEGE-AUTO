@@ -3,29 +3,29 @@
 // Gallery data
 const galleryData = [
   {
-    src: 'https://i.imgur.com/g27w1H7.jpeg',
-    title: 'Vibrant Blue Leather Upholstery',
-    description: 'Sporty style in deep blue leather. Featuring strong side supports and quality stitching.'
+    src: 'component/Gallery/Black-&-Orange.png',
+    title: 'Premium Black & Orange',
+    description: 'Sporty two-tone upholstery with vibrant orange accents.'
   },
   {
-    src: 'https://i.imgur.com/sA1y4wG.jpeg',
-    title: 'Vibrant Red Sport Upholstery',
-    description: 'Sporty Upholstery with Vibrant Red Leather. Features ergonomic side bolsters and precision stitching for ultimate comfort and style.'
+    src: 'component/Gallery/Blue.png',
+    title: 'Elegant Blue Style',
+    description: 'Sophisticated blue leather design.'
   },
   {
-    src: 'https://i.imgur.com/4JjE9tM.jpeg',
-    title: 'Two-Tone Sport Upholstery (Black/Red)',
-    description: 'Two-Tone Sport Upholstery in Black & Red Leather. Features ergonomic side bolsters and precision stitching for a high-contrast, modern look.'
+    src: 'component/Gallery/Red.png',
+    title: 'Classic Red Design',
+    description: 'Rich red leather interior with premium stitching.'
   },
   {
-    src: 'https://i.imgur.com/QZbfNnF.jpeg',
-    title: 'Two-Tone Modern Look (Dark Blue/White)',
-    description: 'Elegant Two-Tone Upholstery in Dark Blue & White Leather. Features ergonomic side bolsters and precision stitching for a classic, refined look.'
+    src: 'component/Gallery/Dark-blue-&-white.png',
+    title: 'Modern Dark Blue & White',
+    description: 'Bold contrast with exceptional craftsmanship.'
   },
   {
-    src: 'https://i.imgur.com/jE6XhT7.jpeg',
-    title: 'Premium Two-Tone (Black/Orange) Upholstery',
-    description: 'Premium Sport Upholstery with Dynamic Orange Inserts. Combines rich black leather with vibrant Orange, engineered with supportive bolsters for comfort.'
+    src: 'component/Gallery/Black-&-Red.png',
+    title: 'Sporty Black & Red',
+    description: 'Dynamic black and red leather combination.'
   }
 ];
 
@@ -36,6 +36,7 @@ let galleryItems = [];
 document.addEventListener('DOMContentLoaded', function () {
   initGallery();
   setupGalleryEvents();
+  animateStats();
 });
 
 // Initialize gallery
@@ -59,54 +60,107 @@ function initGallery() {
 }
 
 // Load gallery images
-async function loadGalleryImages() {
+// Load gallery images directly
+function loadGalleryImages() {
   const galleryGrid = document.getElementById('gallery-grid');
   if (!galleryGrid) return;
 
-  try {
-    const validImages = [];
+  // Clear loading state
+  galleryGrid.innerHTML = '';
 
-    for (const item of galleryData) {
-      try {
-        const img = new Image();
-        await new Promise((resolve, reject) => {
-          img.onload = () => {
-            validImages.push(item);
-            resolve();
-          };
-          img.onerror = () => {
-            console.log(`Image not found: ${item.src}`);
-            resolve(); // Continue with other images
-          };
-          img.src = item.src;
-        });
-      } catch (error) {
-        console.log(`Error loading image: ${item.src}`);
-      }
-    }
-
-    if (validImages.length === 0) {
-      showEmptyState();
-      return;
-    }
-
-    // Clear loading state
-    galleryGrid.innerHTML = '';
-
-    // Create gallery items
-    validImages.forEach((item, index) => {
-      const galleryItem = createGalleryItem(item, index);
-      galleryGrid.appendChild(galleryItem);
-    });
-
-    // Store gallery items for modal
-    galleryItems = validImages;
-
-  } catch (error) {
-    console.error('Error loading gallery:', error);
+  if (galleryData.length === 0) {
     showEmptyState();
+    return;
+  }
+
+  // Create gallery items directly
+  galleryData.forEach((item, index) => {
+    const galleryItem = createGalleryItem(item, index);
+    galleryGrid.appendChild(galleryItem);
+  });
+
+  // Trigger animations
+  setTimeout(() => {
+    const items = document.querySelectorAll('.gallery-item');
+    items.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add('visible');
+      }, index * 100);
+    });
+  }, 100);
+}
+
+// Create gallery item HTML
+function createGalleryItem(item, index) {
+  const div = document.createElement('div');
+  div.className = 'gallery-item';
+  div.innerHTML = `
+    <div class="gallery-image-container">
+      <img src="${item.src}" alt="${item.title}" loading="lazy">
+      <div class="gallery-overlay">
+        <div class="gallery-info">
+          <h3>${item.title}</h3>
+          <p>${item.description}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  div.addEventListener('click', () => {
+    window.location.href = `image-preview.html?index=${index}`;
+  });
+
+  return div;
+}
+
+function showEmptyState() {
+  const galleryGrid = document.getElementById('gallery-grid');
+  if (galleryGrid) {
+    galleryGrid.innerHTML = '<div class="error-message">No images found.</div>';
   }
 }
+
+function setupGalleryEvents() {
+  // Any additional events
+}
+
+// Stats Animation
+function animateStats() {
+  const statsSection = document.querySelector('.gallery-stats');
+  if (!statsSection) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const numbers = statsSection.querySelectorAll('.stat-number');
+        numbers.forEach(num => {
+          const target = parseInt(num.innerText);
+          if (isNaN(target)) return; // Skip if not a number (e.g. "99%")
+
+          let current = 0;
+          const suffix = num.innerText.replace(/[0-9]/g, '');
+          const duration = 2000; // 2 seconds
+          const stepTime = Math.abs(Math.floor(duration / target));
+
+          const timer = setInterval(() => {
+            current += 1;
+            num.innerText = current + suffix;
+            if (current >= target) {
+              clearInterval(timer);
+              num.innerText = target + suffix; // Ensure exact end value
+            }
+          }, stepTime);
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  observer.observe(statsSection);
+}
+
+// Store gallery items for modal
+
 
 // Create gallery item
 function createGalleryItem(item, index) {
