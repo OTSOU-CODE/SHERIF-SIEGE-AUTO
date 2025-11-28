@@ -349,17 +349,16 @@ function setupContactForm() {
         e.preventDefault();
 
         const formData = new FormData(contactForm);
-        const data = Object.fromEntries(formData);
         const fileInput = document.getElementById('file-upload');
 
         // Validation
-        if (!data.name || !data.email || !data.message) {
+        if (!formData.get('name') || !formData.get('email') || !formData.get('message')) {
             showNotification('Please fill in all required fields.', 'error');
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(data.email)) {
+        if (!emailRegex.test(formData.get('email'))) {
             showNotification('Please enter a valid email address.', 'error');
             return;
         }
@@ -373,37 +372,26 @@ function setupContactForm() {
 
         try {
             // Prepare payload
-            const payload = {
-                name: data.name,
-                email: data.email,
-                phone: data.phone || '',
-                vehicle: data.vehicle || '',
-                message: data.message,
-                timestamp: new Date().toISOString(),
-                source: 'SHERIF-SIEGE-AUTO Mobile Website'
-            };
+            const payload = new FormData();
+            payload.append('name', formData.get('name'));
+            payload.append('email', formData.get('email'));
+            payload.append('phone', formData.get('phone') || '');
+            payload.append('vehicle', formData.get('vehicle') || '');
+            payload.append('message', formData.get('message'));
+            payload.append('timestamp', new Date().toISOString());
+            payload.append('source', 'SHERIF-SIEGE-AUTO Mobile Website');
 
             // Handle file upload if present
             if (fileInput && fileInput.files.length > 0) {
-                try {
-                    const base64File = await toBase64(fileInput.files[0]);
-                    payload.file = base64File;
-                    payload.fileName = fileInput.files[0].name;
-                } catch (fileError) {
-                    console.error('Error processing file:', fileError);
-                    // Continue without file if processing fails
-                }
+                payload.append('file', fileInput.files[0]);
             }
 
             // Send to webhook
-            const webhookUrl = 'http://localhost:5678/webhook/f1a3160d-f1b7-46ae-bb3b-700ba002ea43';
+            const webhookUrl = 'http://localhost:5678/webhook-test/f1a3160d-f1b7-46ae-bb3b-700ba002ea43';
 
             const response = await fetch(webhookUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload)
+                body: payload
             });
 
             if (response.ok) {
@@ -906,12 +894,4 @@ function setupFileUpload() {
     }
 }
 
-// Helper to convert file to Base64
-function toBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
+
