@@ -17,141 +17,14 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
-    <style>
-        .category-page-content {
-            padding-top: 100px;
-            padding-bottom: 60px;
-            min-height: 100vh;
-            background: var(--surface);
-        }
-
-        .search-container {
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            font-family: var(--font-primary);
-            font-size: 1rem;
-            transition: var(--transition-normal);
-            background: var(--background);
-            color: var(--text-primary);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .data-table-container {
-            background: var(--background);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            border: 1px solid var(--border-light);
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .data-table th {
-            background: var(--surface-dark);
-            font-weight: 600;
-            color: var(--primary);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .data-table tr:hover {
-            background: var(--surface);
-        }
-
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-        }
-
-        .page-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border);
-            background: var(--background);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition-normal);
-            color: var(--text-primary);
-        }
-
-        .page-btn:hover {
-            background: var(--surface-dark);
-        }
-
-        .page-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .loading-spinner {
-            text-align: center;
-            padding: 2rem;
-            color: var(--primary);
-            font-size: 1.5rem;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-
-            .data-table th,
-            .data-table td {
-                padding: 0.75rem 0.5rem;
-                font-size: 0.9rem;
-            }
-
-            .hide-mobile {
-                display: none;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="category.css">
 </head>
 
 <body>
@@ -205,54 +78,91 @@
 
     <!-- Main Content -->
     <main class="category-page-content">
-        <div class="container">
-            <!-- Back to Home Button -->
-            <div class="back-to-home" style="margin-bottom: 2rem;">
-                <a href="index.html" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to Home</span>
-                </a>
+
+        <!-- Hero Search Section -->
+        <section class="search-hero">
+            <div class="hero-text-content">
+                <h1 class="hero-title">Find Your Vehicle</h1>
+                <p class="hero-subtitle">Explore our catalog of supported models</p>
             </div>
 
-            <!-- Header -->
-            <div class="section-header">
-                <span class="section-tag">Vehicle Catalog</span>
-                <h2 class="section-title">Browse Vehicle Models</h2>
-                <p class="section-description">
-                    Explore our comprehensive database of vehicle models we service.
-                </p>
-            </div>
+            <div class="sticky-search-wrapper" id="stickySearchWrapper">
+                <div class="search-bar-container">
+                    <div class="search-input-group">
+                        <button class="filter-toggle-btn" id="filterToggleBtn" aria-label="Open Filters">
+                            <i class="fas fa-sliders-h"></i>
+                            <span class="btn-text">Filters</span>
+                        </button>
+                        <div class="search-field-wrapper">
+                            <input type="text" class="search-input" id="searchInput"
+                                placeholder="Search model or year...">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                    </div>
 
-            <!-- Search -->
-            <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-input" id="searchInput"
-                    placeholder="Search by Brand, Model, or Year...">
-            </div>
-
-            <!-- Data Table -->
-            <div class="data-table-container">
-                <div id="loading" class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i> Loading data...
+                    <!-- Auto-complete Suggestions -->
+                    <div class="autocomplete-suggestions" id="autocompleteSuggestions">
+                        <!-- Populated by JS -->
+                    </div>
                 </div>
-                <table class="data-table" id="vehiclesTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Brand</th>
-                            <th>Model</th>
-                            <th>Year</th>
-                            <th class="hide-mobile">Created</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- Rows will be populated by JS -->
-                    </tbody>
-                </table>
+
+                <!-- Filter Sidebar (Responsive) -->
+                <div class="filter-sidebar" id="filterSidebar">
+                    <div class="filter-header">
+                        <h3>Filters</h3>
+                        <button class="close-filter-btn" id="closeFilterBtn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="filter-content">
+                        <div class="filter-group">
+                            <label class="filter-label">Brand</label>
+                            <div class="custom-dropdown" id="brandDropdown">
+                                <div class="dropdown-trigger" id="brandTrigger">
+                                    <span id="selectedBrand">All Brands</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="dropdown-menu" id="brandMenu">
+                                    <div class="dropdown-item active" data-value="">All Brands</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Year</label>
+                            <div class="custom-dropdown" id="yearDropdown">
+                                <div class="dropdown-trigger" id="yearTrigger">
+                                    <span id="selectedYear">All Years</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="dropdown-menu" id="yearMenu">
+                                    <div class="dropdown-item active" data-value="">All Years</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-footer">
+                        <button class="apply-filters-btn" id="applyFiltersBtn">Apply Filters</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="filter-overlay" id="filterOverlay"></div>
+
+        <!-- Results Container -->
+        <div class="results-container">
+            <div id="loading" class="loading-state">
+                <i class="fas fa-circle-notch fa-spin loading-spinner"></i>
+                <p>Loading vehicle database...</p>
             </div>
 
-            <!-- Pagination -->
-            <div class="pagination" id="pagination">
-                <!-- Pagination buttons will be populated by JS -->
+            <div id="vehiclesGrid" class="vehicles-grid">
+                <!-- Cards populated by JS -->
+            </div>
+
+            <div id="pagination" class="pagination-container">
+                <!-- Pagination buttons -->
             </div>
         </div>
     </main>
