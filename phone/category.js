@@ -25,6 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Responsive Search Placeholder
+    function updateSearchPlaceholder() {
+        if (window.innerWidth < 768) {
+            searchInput.placeholder = "Search brand, model, year...";
+        } else {
+            searchInput.placeholder = "Search brand, model, or year... (e.g. Toyota Camry)";
+        }
+    }
+
+    updateSearchPlaceholder();
+    window.addEventListener('resize', updateSearchPlaceholder);
+
     let allData = [];
     let filteredData = [];
     let currentPage = 1;
@@ -229,10 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput.value.toLowerCase().trim();
 
         filteredData = allData.filter(item => {
-            const matchesSearch = !searchTerm ||
-                item.brand.toLowerCase().includes(searchTerm) ||
-                item.model.toLowerCase().includes(searchTerm) ||
-                item.year.toString().includes(searchTerm);
+            // Combine fields for smarter search (e.g. allows "Toyota Camry" or "Civic 2020")
+            const itemSearchString = `${item.brand} ${item.model} ${item.year}`.toLowerCase();
+            const matchesSearch = !searchTerm || itemSearchString.includes(searchTerm);
 
             const matchesBrand = !activeBrand || item.brand === activeBrand;
             const matchesYear = !activeYear || item.year === activeYear;
@@ -502,7 +513,8 @@ document.addEventListener('DOMContentLoaded', () => {
             autocompleteSuggestions.classList.remove('active');
         }
 
-        filterData();
+        // Live filtering removed to allow explicit search button click
+        // filterData(); 
     }, 300));
 
     // Hide suggestions on click outside
