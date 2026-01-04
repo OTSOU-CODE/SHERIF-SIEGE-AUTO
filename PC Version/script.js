@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
     detectComponentImages();
     initCarSeatCarousel();
     setupCarBrands();
-    setupCarBrands();
     setupScrollAnimations();
     setupFileUpload();
+    initHeaderSearch();
 });
 
 // Initialize DOM elements
@@ -59,6 +59,9 @@ function setupEventListeners() {
     // Scroll events
     window.addEventListener('scroll', handleScroll);
 
+    // Close mobile menu when resizing to desktop to avoid stuck open overlay
+    window.addEventListener('resize', debounce(handleResize, 150));
+
     // Theme toggle
     if (themeToggleBtn) {
         themeToggleBtn.addEventListener('click', toggleTheme);
@@ -66,6 +69,12 @@ function setupEventListeners() {
 
     // Touch events for better mobile interaction
     setupTouchEvents();
+}
+
+function handleResize() {
+    if (window.innerWidth >= 768 && navMenu && navMenu.classList.contains('active')) {
+        closeMobileMenu();
+    }
 }
 
 // Mobile menu functions
@@ -93,13 +102,13 @@ function closeMobileMenu() {
 function handleScroll() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-
-    // Navbar background
+    // Navbar shrink-on-scroll toggle (class-based)
     if (navbar) {
-        if (scrollTop > 100) {
-            navbar.style.background = isDarkMode ? 'rgba(26, 26, 26, 0.98)' : 'rgba(255, 255, 255, 0.98)';
+        // Add scrolled class after user scrolls down 50px for a compact header
+        if (scrollTop > 50) {
+            navbar.classList.add('scrolled');
         } else {
-            navbar.style.background = isDarkMode ? 'rgba(26, 26, 26, 0.95)' : 'rgba(255, 255, 255, 0.95)';
+            navbar.classList.remove('scrolled');
         }
     }
 
@@ -145,11 +154,16 @@ function updateActiveNavLink() {
 function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
-        const offsetTop = section.offsetTop - 80; // Account for fixed navbar
-        window.scrollTo({
-            top: offsetTop,
-            behavior: 'smooth'
-        });
+        // Account for current navbar height (dynamic on scroll)
+        let navHeight = 80;
+        if (navbar) {
+            const cssNavHeight = getComputedStyle(navbar).getPropertyValue('--navbar-height');
+            if (cssNavHeight) {
+                navHeight = parseInt(cssNavHeight, 10) || navHeight;
+            }
+        }
+        const offsetTop = section.offsetTop - navHeight;
+        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
     }
 }
 
@@ -162,7 +176,82 @@ function scrollToTop() {
 }
 
 // Theme toggle functionality
-function toggleTheme() {
+// Theme toggle functionality
+function toggleTheme(event) {
+    // Check if View Transitions are supported
+    if (!document.startViewTransition) {
+        performThemeToggle();
+        return;
+    }
+
+    // Get click coordinates
+    const x = event ? event.clientX : window.innerWidth / 2;
+    const y = event ? event.clientY : window.innerHeight / 2;
+    const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+    );
+
+    // Determine current and next theme
+    const root = document.documentElement;
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    
+    // Set a class to handle z-index stacking in CSS
+    // If going Dark -> Light (isDark is true currently), we want the Old view (Dark) on top to shrink
+    if (isDark) {
+        root.classList.add('theme-transition-back');
+    }
+
+    const transition = document.startViewTransition(() => {
+        performThemeToggle();
+    });
+
+    transition.ready.then(() => {
+        // If we were Dark (isDark=true), we are now going to Light.
+        // We want the OLD view (Dark) to shrink from full radius to 0 at the click point.
+        // If we were Light (isDark=false), we are now going to Dark.
+        // We want the NEW view (Dark) to expand from 0 to full radius.
+        
+        if (isDark) {
+            // Dark -> Light: Animate OLD view (Dark) shrinking
+            document.documentElement.animate(
+                {
+                    clipPath: [
+                        `circle(${endRadius}px at ${x}px ${y}px)`,
+                        `circle(0px at ${x}px ${y}px)`,
+                    ],
+                },
+                {
+                    duration: 500,
+                    easing: "ease-in-out",
+                    pseudoElement: "::view-transition-old(root)",
+                }
+            );
+        } else {
+            // Light -> Dark: Animate NEW view (Dark) expanding
+            document.documentElement.animate(
+                {
+                    clipPath: [
+                        `circle(0px at ${x}px ${y}px)`,
+                        `circle(${endRadius}px at ${x}px ${y}px)`,
+                    ],
+                },
+                {
+                    duration: 500,
+                    easing: "ease-in-out",
+                    pseudoElement: "::view-transition-new(root)",
+                }
+            );
+        }
+    });
+
+    // Clean up class after transition
+    transition.finished.then(() => {
+        root.classList.remove('theme-transition-back');
+    });
+}
+
+function performThemeToggle() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
@@ -171,12 +260,23 @@ function toggleTheme() {
 
     // Update button icon
     const icon = themeToggleBtn.querySelector('i');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (newTheme === 'dark') {
-        icon.className = 'fas fa-sun';
-    } else {
-        icon.className = 'fas fa-moon';
+    if (reducedMotion) {
+        icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        themeToggleBtn.classList.remove('rotating');
+        themeToggleBtn.setAttribute('aria-pressed', newTheme === 'dark');
+        return;
     }
+
+    // Add a quick rotation cue
+    themeToggleBtn.classList.add('rotating');
+    setTimeout(() => {
+        icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        setTimeout(() => themeToggleBtn.classList.remove('rotating'), 260);
+    }, 120);
+
+    themeToggleBtn.setAttribute('aria-pressed', newTheme === 'dark');
 }
 
 // Load saved theme
@@ -345,18 +445,90 @@ function setupContactForm() {
     const contactForm = document.getElementById('contact-form');
     if (!contactForm) return;
 
+    // Inline Validation
+    const inputs = contactForm.querySelectorAll('input[required], textarea[required]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', () => validateInput(input));
+        input.addEventListener('input', () => {
+            if (input.classList.contains('invalid')) validateInput(input);
+        });
+    });
+
+    function validateInput(input) {
+        if (input.checkValidity()) {
+            input.classList.add('valid');
+            input.classList.remove('invalid');
+        } else {
+            input.classList.add('invalid');
+            input.classList.remove('valid');
+        }
+    }
+
+    // File Upload Drag & Drop
+    const fileWrapper = document.querySelector('.file-upload-wrapper');
+    const fileInput = document.getElementById('file-upload');
+    const fileNameDisplay = document.getElementById('file-name');
+
+    if (fileWrapper && fileInput) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileWrapper.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileWrapper.addEventListener(eventName, () => fileWrapper.classList.add('drag-over'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileWrapper.addEventListener(eventName, () => fileWrapper.classList.remove('drag-over'), false);
+        });
+
+        fileWrapper.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            updateFileName(files);
+        });
+
+        fileInput.addEventListener('change', () => {
+            updateFileName(fileInput.files);
+        });
+
+        function updateFileName(files) {
+            if (files && files.length > 0) {
+                fileNameDisplay.textContent = files[0].name;
+                fileNameDisplay.classList.add('has-file');
+                fileWrapper.classList.add('valid');
+            } else {
+                fileNameDisplay.textContent = 'No file chosen';
+                fileNameDisplay.classList.remove('has-file');
+                fileWrapper.classList.remove('valid');
+            }
+        }
+    }
+
     contactForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        const formData = new FormData(contactForm);
-        const fileInput = document.getElementById('file-upload');
+        // Validate all before submit
+        let isValid = true;
+        inputs.forEach(input => {
+            validateInput(input);
+            if (!input.checkValidity()) isValid = false;
+        });
 
-        // Validation
-        if (!formData.get('name') || !formData.get('email') || !formData.get('message')) {
-            showNotification('Please fill in all required fields.', 'error');
+        if (!isValid) {
+            showNotification('Please correct the highlighted fields.', 'error');
             return;
         }
 
+        const formData = new FormData(contactForm);
+
+        // Validation (Email Regex)
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.get('email'))) {
             showNotification('Please enter a valid email address.', 'error');
@@ -379,33 +551,29 @@ function setupContactForm() {
             payload.append('vehicle', formData.get('vehicle') || '');
             payload.append('message', formData.get('message'));
             payload.append('timestamp', new Date().toISOString());
-            payload.append('source', 'SHERIF-SIEGE-AUTO Mobile Website');
+            payload.append('source', 'SHERIF-SIEGE-AUTO Website');
 
             // Handle file upload if present
             if (fileInput && fileInput.files.length > 0) {
                 payload.append('file', fileInput.files[0]);
             }
 
-            // Send to webhook
-            const webhookUrl = 'http://localhost:5678/webhook-test/f1a3160d-f1b7-46ae-bb3b-700ba002ea43';
+            // Simulate sending (replace with actual endpoint)
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                body: payload
-            });
-
-            if (response.ok) {
-                showNotification('Thank you for your message. We will contact you very soon!', 'success');
-                contactForm.reset();
-                // Reset file input display
-                const fileNameDisplay = document.getElementById('file-name');
-                if (fileNameDisplay) {
-                    fileNameDisplay.textContent = 'No file chosen';
-                    fileNameDisplay.classList.remove('has-file');
-                }
-            } else {
-                throw new Error('Failed to send message');
+            // Success
+            showNotification('Thank you for your message. We will contact you very soon!', 'success');
+            contactForm.reset();
+            // Reset validation classes
+            inputs.forEach(input => input.classList.remove('valid', 'invalid'));
+            
+            // Reset file input display
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = 'No file chosen';
+                fileNameDisplay.classList.remove('has-file');
+                if (fileWrapper) fileWrapper.classList.remove('valid');
             }
+            
         } catch (error) {
             console.error('Error sending form data:', error);
             showNotification('There was an error sending your message. Please try again or call us directly.', 'error');
@@ -499,6 +667,235 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
+// Header Search Functionality
+function initHeaderSearch() {
+    const searchToggle = document.getElementById('search-toggle');
+    const searchContainer = document.querySelector('.search-container');
+    const searchInput = document.getElementById('header-search-input');
+    const searchResults = document.getElementById('header-search-results');
+    
+    if (!searchToggle || !searchContainer || !searchInput) return;
+
+    // Load History
+    const loadHistory = () => {
+        try {
+            return JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        } catch (e) {
+            console.error('Failed to load search history', e);
+            return [];
+        }
+    };
+
+    const saveHistory = (term) => {
+        try {
+            let history = loadHistory();
+            if (!history.includes(term)) {
+                history.unshift(term);
+                if (history.length > 5) history.pop(); // Keep last 5
+                localStorage.setItem('searchHistory', JSON.stringify(history));
+            }
+        } catch (e) {
+            console.error('Failed to save search history', e);
+        }
+    };
+
+    // Data Loading
+    let vehicleData = [];
+    const csvPath = "../DATA/vehicles.csv";
+    
+    // Services Data (Hardcoded for now)
+    const servicesData = [
+        { name: "Leather Restoration", type: "service", url: 'category.html?q=leather' },
+        { name: "Seat Repair", type: "service", url: 'category.html?q=seat' },
+        { name: "Dashboard Restoration", type: "service", url: 'category.html?q=dashboard' },
+        { name: "Custom Stitching", type: "service", url: 'category.html?q=custom' },
+        { name: "Headliner Replacement", type: "service", url: 'category.html?q=roof' },
+        { name: 'Contact Us', type: 'page', url: '#contact' },
+        { name: 'About Us', type: 'page', url: '#why-choose-us' },
+        { name: 'Our Work', type: 'page', url: 'gallery.html' }
+    ];
+
+    fetch(csvPath)
+        .then((response) => response.ok ? response.text() : Promise.reject("Failed to load"))
+        .then((text) => {
+            const lines = text.split("\n").filter((l) => l.trim());
+            const start = lines[0].toLowerCase().includes("brand") ? 1 : 0;
+            vehicleData = lines.slice(start).map((line) => {
+                const cols = line.split(",");
+                if (cols.length >= 2) {
+                    return {
+                        brand: cols[0].trim(),
+                        model: cols[1].trim(),
+                        year: cols[2] ? cols[2].trim() : "",
+                    };
+                }
+                return null;
+            }).filter((i) => i);
+        })
+        .catch((err) => console.log("Header search data error:", err));
+
+    let debounceTimer;
+
+    const renderResults = (vehicleMatches, serviceMatches, isHistory = false) => {
+        if (!searchResults) return;
+        searchResults.innerHTML = '';
+        
+        if (isHistory && vehicleMatches.length > 0) {
+             const historyHeader = document.createElement('div');
+             historyHeader.className = 'search-header';
+             historyHeader.textContent = 'Recent Searches';
+             historyHeader.style.padding = '8px 12px';
+             historyHeader.style.fontSize = '0.8rem';
+             historyHeader.style.color = 'var(--text-secondary)';
+             searchResults.appendChild(historyHeader);
+
+             vehicleMatches.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `<span><i class="fas fa-history" style="margin-right: 8px; opacity: 0.6;"></i>${item}</span>`;
+                div.addEventListener('click', () => {
+                    searchInput.value = item;
+                    performSearch(item);
+                });
+                searchResults.appendChild(div);
+             });
+             searchResults.classList.add('active');
+             searchResults.style.display = 'block';
+             return;
+        }
+
+        if (vehicleMatches.length === 0 && serviceMatches.length === 0) {
+            searchResults.classList.remove('active');
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        let html = "";
+
+        if (vehicleMatches.length > 0) {
+            html += `<div style="padding: 8px 12px; font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">VEHICLES</div>`;
+            vehicleMatches.forEach((v) => {
+                html += `
+                        <div class="search-result-item" onclick="location.href='category.html?search=${encodeURIComponent(v.brand + " " + v.model)}'">
+                                <i class="fas fa-car"></i>
+                                <span>${v.brand} ${v.model} ${v.year}</span>
+                        </div>
+                  `;
+            });
+        }
+
+        if (serviceMatches.length > 0) {
+            html += `<div style="padding: 8px 12px; font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; margin-top: 5px;">SERVICES & PAGES</div>`;
+            serviceMatches.forEach((s) => {
+                html += `
+                        <div class="search-result-item" onclick="location.href='${s.url}'">
+                                <i class="fas ${s.type === 'page' ? 'fa-link' : 'fa-tools'}"></i>
+                                <span>${s.name}</span>
+                        </div>
+                  `;
+            });
+        }
+
+        searchResults.innerHTML = html;
+        searchResults.classList.add("active");
+        searchResults.style.display = 'block';
+    };
+
+    const performSearch = (query) => {
+        if (!query) {
+            renderResults(loadHistory(), [], true);
+            return;
+        }
+        
+        // Filter Vehicles
+        const vehicleMatches = vehicleData.filter((v) =>
+            v.brand.toLowerCase().includes(query.toLowerCase()) ||
+            v.model.toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 3);
+
+        // Filter Services
+        const serviceMatches = servicesData.filter((s) => 
+            s.name.toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 3);
+        
+        renderResults(vehicleMatches, serviceMatches);
+    };
+
+    // Toggle Search Bar
+    searchToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        searchContainer.classList.toggle('active');
+        if (searchContainer.classList.contains('active')) {
+            setTimeout(() => {
+                searchInput.focus();
+                performSearch(''); // Show history on open
+            }, 100);
+        }
+    });
+        
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+            if (searchContainer.classList.contains('active') && !searchContainer.contains(e.target) && !searchToggle.contains(e.target)) {
+                searchContainer.classList.remove('active');
+                if (searchResults) {
+                    searchResults.classList.remove('active');
+                    searchResults.style.display = 'none';
+                }
+            }
+    });
+    
+    // Input Handler with Debounce
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const val = e.target.value.trim();
+            if (val.length > 0) {
+                saveHistory(val);
+            }
+            performSearch(val);
+        }, 300);
+    });
+
+    searchInput.addEventListener('focus', () => {
+        if (!searchInput.value) performSearch('');
+    });
+
+    // Handle Enter Key
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = searchInput.value.trim();
+            if (val) {
+                saveHistory(val);
+                window.location.href = `category.html?search=${encodeURIComponent(val)}`;
+            }
+        }
+    });
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Press '/' to focus search
+        if (e.key === '/' && document.activeElement !== searchInput && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+            e.preventDefault(); 
+            searchContainer.classList.add('active');
+            setTimeout(() => {
+                searchInput.focus();
+                performSearch('');
+            }, 100);
+        }
+        
+        // Close on Escape
+        if (e.key === 'Escape' && searchContainer.classList.contains('active')) {
+            searchContainer.classList.remove('active');
+            searchInput.blur();
+            if (searchResults) {
+                searchResults.classList.remove('active');
+                searchResults.style.display = 'none';
+            }
+        }
+    });
+}
+
 // Car seat carousel functionality
 let currentSeatIndex = 0;
 let seatImages = [];
@@ -509,11 +906,11 @@ async function detectComponentImages() {
     try {
         // List of known images
         const knownImages = [
-            'component/Gallery/Black-&-Orange.png',
-            'component/Gallery/Black-&-Red.png',
-            'component/Gallery/Blue.png',
-            'component/Gallery/Dark-blue-&-white.png',
-            'component/Gallery/Red.png'
+            'component/Gallery/Black-&-Orange.webp',
+            'component/Gallery/Black-&-Red.webp',
+            'component/Gallery/Blue.webp',
+            'component/Gallery/Dark-blue-&-white.webp',
+            'component/Gallery/Red.webp'
         ];
 
         // Combine known images with detected additional images
@@ -525,11 +922,11 @@ async function detectComponentImages() {
     } catch (error) {
         console.log('Using fallback images');
         return [
-            'component/Gallery/Black-&-Orange.png',
-            'component/Gallery/Black-&-Red.png',
-            'component/Gallery/Blue.png',
-            'component/Gallery/Dark-blue-&-white.png',
-            'component/Gallery/Red.png'
+            'component/Gallery/Black-&-Orange.webp',
+            'component/Gallery/Black-&-Red.webp',
+            'component/Gallery/Blue.webp',
+            'component/Gallery/Dark-blue-&-white.webp',
+            'component/Gallery/Red.webp'
         ];
     }
 }
@@ -699,7 +1096,9 @@ function initNewFeatures() {
         const lazyImages = document.querySelectorAll('img[data-src]');
         lazyImages.forEach(img => imageObserver.observe(img));
     }
+
 }
+    
 
 // Utility functions
 function debounce(func, wait) {
@@ -718,6 +1117,8 @@ function debounce(func, wait) {
 const optimizedScrollHandler = debounce(handleScroll, 10);
 window.removeEventListener('scroll', handleScroll);
 window.addEventListener('scroll', optimizedScrollHandler);
+// Initialize state immediately
+optimizedScrollHandler();
 
 // Performance monitoring
 if ('performance' in window) {
@@ -749,20 +1150,20 @@ function setupCarBrands() {
 
     // List of car brand image filenames from component/Car Brands folder
     const carBrands = [
-        'component/Car Brands/Sans-titre-1.png',
-        'component/Car Brands/Sans-titre-2.png',
-        'component/Car Brands/Sans-titre-3.png',
-        'component/Car Brands/Sans-titre-4.png',
-        'component/Car Brands/Sans-titre-5.png',
-        'component/Car Brands/Sans-titre-6.png',
-        'component/Car Brands/Sans-titre-7.png',
-        'component/Car Brands/Sans-titre-8.png',
-        'component/Car Brands/Sans-titre-9.png',
-        'component/Car Brands/Sans-titre-10.png',
-        'component/Car Brands/Sans-titre-11.png',
-        'component/Car Brands/Sans-titre-12.png',
-        'component/Car Brands/Sans-titre-13.png',
-        'component/Car Brands/Sans-titre-14.png'
+        'component/Car Brands/Sans-titre-1.webp',
+        'component/Car Brands/Sans-titre-2.webp',
+        'component/Car Brands/Sans-titre-3.webp',
+        'component/Car Brands/Sans-titre-4.webp',
+        'component/Car Brands/Sans-titre-5.webp',
+        'component/Car Brands/Sans-titre-6.webp',
+        'component/Car Brands/Sans-titre-7.webp',
+        'component/Car Brands/Sans-titre-8.webp',
+        'component/Car Brands/Sans-titre-9.webp',
+        'component/Car Brands/Sans-titre-10.webp',
+        'component/Car Brands/Sans-titre-11.webp',
+        'component/Car Brands/Sans-titre-12.webp',
+        'component/Car Brands/Sans-titre-13.webp',
+        'component/Car Brands/Sans-titre-14.webp'
     ];
 
     // Create brand items (duplicate for seamless loop)
@@ -772,7 +1173,7 @@ function setupCarBrands() {
             item.className = 'car-brand-item';
             const img = document.createElement('img');
             img.src = brand;
-            const altText = brand.split('/').pop().replace('.png', '').replace('Sans-titre-', 'Brand ');
+            const altText = brand.split('/').pop().replace('.webp', '').replace('Sans-titre-', 'Brand ');
             img.alt = altText;
             img.onerror = function () {
                 // Hide broken images
@@ -1039,3 +1440,20 @@ function initCompatibilityChecker() {
         }
     });
 }
+
+
+
+// Scroll Animation Observer (Added)
+document.addEventListener('DOMContentLoaded', () => {
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+        scrollObserver.observe(el);
+    });
+});

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Vehicle Category - Sherif-Auto</title>
+    <meta
+      name="description"
+      content="Sherif-Auto - Browse our vehicle categories and upholstery services."
+    />
+
+    <!-- Preload critical resources -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      as="style"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="theme-transition.css" />
+    <link rel="stylesheet" href="category.css" /> <!-- Page Specific CSS -->
+  </head>
+
+  <body>
+    <!-- Navigation (Copied from index.html) -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <!-- Left: Branding -->
+        <div class="nav-left">
+          <div class="nav-brand">
+            <div class="nav-logo">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <!-- Seat Base -->
+                <rect
+                  x="3"
+                  y="14"
+                  width="18"
+                  height="6"
+                  rx="2"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="0.8"
+                />
+                <!-- Seat Back -->
+                <rect
+                  x="4"
+                  y="6"
+                  width="16"
+                  height="10"
+                  rx="2"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="0.8"
+                />
+                <!-- Headrest -->
+                <rect
+                  x="7"
+                  y="2"
+                  width="10"
+                  height="6"
+                  rx="3"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="0.8"
+                />
+                <!-- Seat Cushion Detail -->
+                <rect
+                  x="5"
+                  y="15"
+                  width="14"
+                  height="2"
+                  rx="1"
+                  fill="#1A1A1A"
+                  opacity="0.6"
+                />
+                <!-- Back Support Lines -->
+                <line
+                  x1="6"
+                  y1="8"
+                  x2="6"
+                  y2="14"
+                  stroke="#8B6914"
+                  stroke-width="0.5"
+                  opacity="0.7"
+                />
+                <line
+                  x1="18"
+                  y1="8"
+                  x2="18"
+                  y2="14"
+                  stroke="#8B6914"
+                  stroke-width="0.5"
+                  opacity="0.7"
+                />
+                <line
+                  x1="12"
+                  y1="8"
+                  x2="12"
+                  y2="14"
+                  stroke="#8B6914"
+                  stroke-width="0.5"
+                  opacity="0.7"
+                />
+                <!-- Stitching Pattern -->
+                <path
+                  d="M8 4 Q12 2 16 4"
+                  stroke="#8B6914"
+                  stroke-width="0.3"
+                  fill="none"
+                  opacity="0.5"
+                />
+                <path
+                  d="M8 5 Q12 3 16 5"
+                  stroke="#8B6914"
+                  stroke-width="0.3"
+                  fill="none"
+                  opacity="0.5"
+                />
+              </svg>
+            </div>
+            <div class="brand-text">
+              <h1>Sherif-Auto</h1>
+              <span>Auto Upholstery</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Navigation Links -->
+        <div class="nav-center desktop-only">
+          <a href="index.html#home" class="nav-link">Home</a>
+          <a href="index.html#services" class="nav-link">Services</a>
+          <a href="index.html#why-choose-us" class="nav-link">About</a>
+          <a href="category.html" class="nav-link active">Category</a>
+          <a href="gallery.html" class="nav-link">Our Work</a>
+          <a href="index.html#contact" class="nav-link">Contact</a>
+        </div>
+
+        <!-- Right: Utilities (Search & Theme) -->
+        <div class="nav-right">
+          <!-- Search Bar -->
+          <div class="search-container">
+            <button class="search-toggle-btn" id="search-toggle" title="Search">
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="search-expandable">
+              <input
+                type="text"
+                id="header-search-input"
+                placeholder="Search models or services..."
+              />
+              <div class="search-results-dropdown" id="header-search-results">
+                <!-- Results injected here -->
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="theme-toggle-btn"
+            id="theme-toggle"
+            title="Switch Theme"
+          >
+            <i class="fas fa-moon"></i>
+          </button>
+
+
+          <div class="nav-toggle" id="nav-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </div>
+        </div>
+
+        <!-- Mobile Menu overlay -->
+        <div class="nav-menu" id="nav-menu">
+           <a href="index.html#home" class="nav-link">Home</a>
+          <a href="index.html#services" class="nav-link">Services</a>
+          <a href="index.html#why-choose-us" class="nav-link">About</a>
+          <a href="category.html" class="nav-link active">Category</a>
+          <a href="gallery.html" class="nav-link">Our Work</a>
+          <a href="index.html#contact" class="nav-link">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="page-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="page-title">Vehicle Category</h1>
+                <div class="view-controls">
+                    <button class="view-btn" data-view="grid-3">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn active" data-view="grid-4">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- Filter Sidebar -->
+            <aside class="filter-sidebar">
+                <div class="filter-header">
+                    <h3>Filters</h3>
+                    <a href="#" class="clear-filters">Clear All</a>
+                </div>
+
+                <!-- Search -->
+                <div class="filter-group">
+                    <h4>Search</h4>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search brand or model...">
+                    </div>
+                </div>
+
+                <!-- Brand Filter -->
+                <div class="filter-group">
+                    <h4>Brand</h4>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="toyota">
+                            <label for="toyota">Toyota</label>
+                            <span class="count-badge">45</span>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="honda">
+                            <label for="honda">Honda</label>
+                            <span class="count-badge">38</span>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bmw">
+                            <label for="bmw">BMW</label>
+                            <span class="count-badge">32</span>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="mercedes">
+                            <label for="mercedes">Mercedes</label>
+                            <span class="count-badge">28</span>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="audi">
+                            <label for="audi">Audi</label>
+                            <span class="count-badge">24</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Year Range -->
+                <div class="filter-group">
+                    <h4>Year Range</h4>
+                    <div class="year-range">
+                        <div class="year-values">
+                            <span id="minYear">2010</span>
+                            <span id="maxYear">2024</span>
+                        </div>
+                        <input type="range" min="2010" max="2024" value="2010" id="yearMin">
+                        <input type="range" min="2010" max="2024" value="2024" id="yearMax">
+                    </div>
+                </div>
+
+                <!-- Type Filter -->
+                <div class="filter-group">
+                    <h4>Type</h4>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="sedan">
+                        <label for="sedan">Sedan</label>
+                        <span class="count-badge">67</span>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="suv">
+                        <label for="suv">SUV</label>
+                        <span class="count-badge">54</span>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="truck">
+                        <label for="truck">Truck</label>
+                        <span class="count-badge">32</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main>
+                <!-- Sort & Results -->
+                <div class="results-header">
+                    <div class="results-count">
+                        <strong>167</strong> vehicles found
+                    </div>
+                    <div class="sort-controls">
+                        <select class="sort-select">
+                            <option>Sort by: Relevance</option>
+                            <option>Sort by: Name (A-Z)</option>
+                            <option>Sort by: Name (Z-A)</option>
+                            <option>Sort by: Year (Newest)</option>
+                            <option>Sort by: Year (Oldest)</option>
+                        </select>
+                        <div class="compare-mode">
+                            <input type="checkbox" id="compareMode">
+                            <label for="compareMode">Compare Mode</label>
+                        </div>
+                        <button class="compare-btn">Compare Selected (0)</button>
+                    </div>
+                </div>
+
+                <!-- Grid View -->
+                <div class="vehicles-grid">
+                    <div class="vehicle-card">
+                        <input type="checkbox" class="compare-checkbox" style="display: none;">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h3>Camry</h3>
+                        <div class="vehicle-brand">Toyota</div>
+                        <div class="vehicle-year">2020-2024</div>
+                        <div class="vehicle-actions">
+                            <button class="btn-view">View Details</button>
+                        </div>
+                    </div>
+                    <!-- Repeat cards... -->
+                    <div class="vehicle-card">
+                        <input type="checkbox" class="compare-checkbox" style="display: none;">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h3>Accord</h3>
+                        <div class="vehicle-brand">Honda</div>
+                        <div class="vehicle-year">2018-2023</div>
+                        <div class="vehicle-actions">
+                            <button class="btn-view">View Details</button>
+                        </div>
+                    </div>
+                    <div class="vehicle-card">
+                        <input type="checkbox" class="compare-checkbox" style="display: none;">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h3>3 Series</h3>
+                        <div class="vehicle-brand">BMW</div>
+                        <div class="vehicle-year">2019-2024</div>
+                        <div class="vehicle-actions">
+                            <button class="btn-view">View Details</button>
+                        </div>
+                    </div>
+                    <div class="vehicle-card">
+                        <input type="checkbox" class="compare-checkbox" style="display: none;">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h3>C-Class</h3>
+                        <div class="vehicle-brand">Mercedes</div>
+                        <div class="vehicle-year">2020-2024</div>
+                        <div class="vehicle-actions">
+                            <button class="btn-view">View Details</button>
+                        </div>
+                    </div>
+                    <div class="vehicle-card">
+                        <input type="checkbox" class="compare-checkbox" style="display: none;">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h3>Civic</h3>
+                        <div class="vehicle-brand">Honda</div>
+                        <div class="vehicle-year">2019-2024</div>
+                        <div class="vehicle-actions">
+                            <button class="btn-view">View Details</button>
+                        </div>
+                    </div>
+                    <div class="vehicle-card">
+                        <input type="checkbox" class="compare-checkbox" style="display: none;">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h3>A4</h3>
+                        <div class="vehicle-brand">Audi</div>
+                        <div class="vehicle-year">2020-2024</div>
+                        <div class="vehicle-actions">
+                            <button class="btn-view">View Details</button>
+                        </div>
+                    </div>
+                    <div class="vehicle-card">
+                        <input type="checkbox" class="compare-checkbox" style="display: none;">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h3>RAV4</h3>
+                        <div class="vehicle-brand">Toyota</div>
+                        <div class="vehicle-year">2019-2024</div>
+                        <div class="vehicle-actions">
+                            <button class="btn-view">View Details</button>
+                        </div>
+                    </div>
+                    <div class="vehicle-card">
+                        <input type="checkbox" class="compare-checkbox" style="display: none;">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h3>X5</h3>
+                        <div class="vehicle-brand">BMW</div>
+                        <div class="vehicle-year">2020-2024</div>
+                        <div class="vehicle-actions">
+                            <button class="btn-view">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- List View -->
+                <div class="vehicles-list">
+                    <div class="vehicle-list-item">
+                        <div class="list-icon"><i class="fas fa-car"></i></div>
+                        <div class="list-info">
+                            <h3>Toyota Camry</h3>
+                            <div class="list-meta">
+                                <span><i class="fas fa-calendar"></i> 2020-2024</span>
+                                <span><i class="fas fa-check-circle"></i> Available</span>
+                            </div>
+                        </div>
+                        <button class="btn-view">View Details</button>
+                    </div>
+                    <!-- More list items to match grid -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">...</button>
+                    <button class="page-btn">12</button>
+                    <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer (Copied from index.html) -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="3"
+                  y="14"
+                  width="18"
+                  height="6"
+                  rx="2"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="1"
+                />
+                <rect
+                  x="4"
+                  y="6"
+                  width="16"
+                  height="10"
+                  rx="2"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="1"
+                />
+                <rect
+                  x="7"
+                  y="2"
+                  width="10"
+                  height="6"
+                  rx="3"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="1"
+                />
+                <rect
+                  x="5"
+                  y="15"
+                  width="14"
+                  height="2"
+                  rx="1"
+                  fill="#1A1A1A"
+                  opacity="0.6"
+                />
+              </svg>
+            </div>
+            <div class="footer-text">
+            <h3>Sherif-Auto</h3>
+            <p>Premium Auto Upholstery Services</p>
+          </div>
+          </div>
+
+          <div class="footer-links">
+            <div class="link-group">
+              <a href="index.html#services">Services</a>
+              <a href="index.html#why-choose-us">About</a>
+              <a href="gallery.html">Work</a>
+              <a href="index.html#contact">Contact</a>
+            </div>
+
+            <div class="link-group social-group">
+              <a
+                href="https://web.facebook.com/profile.php?id=100065269790075"
+                class="social-link"
+                target="_blank"
+                title="Facebook"
+              >
+                <i class="fab fa-facebook"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/sherif_siege_auto"
+                class="social-link"
+                target="_blank"
+                title="Instagram"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a
+                href="https://www.youtube.com/@sherifsiegeauto"
+                class="social-link"
+                target="_blank"
+                title="YouTube"
+              >
+                <i class="fab fa-youtube"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2025 Sherif-Auto. All rights reserved.</p>
+          <div class="footer-legal">
+            <a href="privacy-policy.html">Privacy</a>
+            <a href="terms-of-service.html">Terms</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script src="category.js"></script>
+  </body>
+</html>

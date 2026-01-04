@@ -120,7 +120,7 @@
             <p>Taking too long? Choose manually:</p>
             <div class="view-options">
                 <a href="phone/index.html" class="view-btn">📱 Mobile</a>
-                <a href="phone/index.html" class="view-btn secondary">💻 Desktop (Responsive)</a>
+                <a href="PC Version/index.html" class="view-btn secondary">💻 Desktop (PC Version)</a>
             </div>
         </div>
     </div>
@@ -154,9 +154,9 @@
                     window.location.href = 'phone/index.html';
                 }, 1000);
             } else {
-                messageEl.textContent = 'Desktop device detected! Loading responsive version...';
+                messageEl.textContent = 'Desktop device detected! Loading PC version...';
                 setTimeout(function () {
-                    window.location.href = 'phone/index.html';
+                    window.location.href = 'PC Version/index.html';
                 }, 1000);
             }
         });
