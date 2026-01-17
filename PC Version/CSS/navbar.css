@@ -1,0 +1,202 @@
+/* Tubelight Navbar Styles */
+.tubelight-navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999; /* Matched existing navbar z-index */
+  margin-bottom: 1.5rem;
+  padding-top: 0;
+  display: flex; /* Mobile: Simple flex center or whatever */
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Let clicks pass through empty space */
+  transition: transform 0.3s ease;
+}
+
+.tubelight-navbar.navbar-hidden {
+  transform: translateY(150%);
+}
+
+@media (min-width: 640px) {
+  .tubelight-navbar.navbar-hidden {
+    transform: translateY(-150%);
+  }
+}
+
+/* Ensure children catch events */
+.tubelight-navbar > * {
+  pointer-events: auto;
+}
+
+@media (min-width: 640px) {
+  .tubelight-navbar {
+    top: 0;
+    bottom: auto;
+    padding-top: 2rem; 
+    margin-bottom: 0;
+    
+    /* Desktop: Grid for Far Left Logo + Centered Pill */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-items: start; /* Align to top usually, or center */
+  }
+}
+
+.tubelight-navbar-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem; 
+  /* Center in grid cell */
+  justify-self: center;
+  grid-column: 2;
+
+  /* Glassmorphism background */
+  background-color: rgba(
+    var(--background-rgb, 255, 255, 255),
+    0.05
+  ); 
+  border: 1px solid var(--border, #e0e0e0);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  padding: 0.5rem; 
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.tubelight-logo {
+  display: none; /* Hidden on mobile by default */
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5)); 
+}
+
+@media (min-width: 640px) {
+  .tubelight-logo {
+    display: flex;
+    justify-self: start;
+    grid-column: 1;
+  }
+}
+
+.tubelight-logo svg {
+    width: 48px; /* Slightly larger for header impact */
+    height: 48px;
+    display: block;
+}
+
+.tubelight-nav-item {
+  position: relative;
+  cursor: pointer;
+  font-family: var(--font-primary, sans-serif);
+  font-size: 1rem; /* Increased font size */
+  font-weight: 600;
+  padding: 0.75rem 2rem; /* Increased item padding */
+  border-radius: 9999px;
+  color: var(--text-primary, #2c2c2c); /* Use site variable */
+  text-decoration: none;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.tubelight-nav-item:hover {
+  color: var(--primary, #d4af37);
+}
+
+.tubelight-nav-item.active {
+  color: var(--primary, #d4af37);
+}
+
+/* Icon visibility */
+.tubelight-nav-item span.label {
+  display: none;
+}
+.tubelight-nav-item span.icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tubelight-nav-item span.icon-wrapper i, 
+.tubelight-nav-item span.icon-wrapper svg {
+    /* Ensure icons are slightly bigger if needed */
+    width: 24px; 
+    height: 24px;
+}
+
+@media (min-width: 768px) {
+  .tubelight-nav-item span.label {
+    display: inline;
+  }
+  .tubelight-nav-item span.icon-wrapper {
+    display: none;
+  }
+}
+
+/* The Lamp / Active Background Indicator */
+.tubelight-lamp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 9999px;
+  background-color: rgba(212, 175, 55, 0.05); /* slightly visible gold bg */
+  z-index: -1; /* Behind text */
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Spring-ish ease */
+  pointer-events: none;
+}
+
+/* The Light Glow (simulating the 'lamp' top part) */
+.tubelight-lamp-glow {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.5rem; /* Increased width */
+  height: 0.25rem; /* h-1 */
+  background-color: var(--primary, #d4af37);
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+}
+
+/* Glow effects */
+.tubelight-lamp-glow::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 3.5rem; /* Increased size */
+  height: 1.5rem; /* h-6 */
+  background-color: rgba(212, 175, 55, 0.2);
+  border-radius: 9999px;
+  filter: blur(12px); /* blur-md */
+}
+
+.tubelight-lamp-glow::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.5rem; /* Increased size */
+  height: 1.5rem; /* h-6 */
+  background-color: rgba(212, 175, 55, 0.2);
+  border-radius: 9999px;
+  filter: blur(12px);
+}
+
+.tubelight-lamp-spot {
+  position: absolute;
+  top: 0;
+  left: 0.75rem; /* Adjusted */
+  width: 1rem;
+  height: 1rem;
+  background-color: rgba(212, 175, 55, 0.2);
+  border-radius: 9999px;
+  filter: blur(4px);
+}
