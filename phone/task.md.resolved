@@ -1,0 +1,13 @@
+# Project Cleanup and Reorganization
+
+- [ ] Analyze project structure and dependencies <!-- id: 0 -->
+- [ ] Create implementation plan for cleanup <!-- id: 1 -->
+- [x] Move CSS files to `CSS/` <!-- id: 2 -->
+- [x] Move JS files to `JS/` <!-- id: 3 -->
+- [x] Remove redundant minified files (or move to dist if needed) <!-- id: 4 -->
+- [x] Remove utility scripts ([minify_assets.js](file:///c:/Users/ELECTRO-RIMO/Desktop/Lively%20Website/Sherif-Bach/PC%20Version/minify_assets.js), etc.) or move to `scripts/` <!-- id: 5 -->
+- [ ] Update HTML references to new paths <!-- id: 6 -->
+- [ ] Update HTML references to new paths <!-- id: 6 -->
+- [x] Fix broken image/data paths in JS (loading issues) <!-- id: 8 -->
+- [x] Fix missing `CONFIG` object definition <!-- id: 9 -->
+- [x] Verify website functionality and check console for errors <!-- id: 7 -->

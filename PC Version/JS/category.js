@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Filter Inputs
   const brandGrid = document.getElementById("brandGrid");
+  const modelGrid = document.getElementById("modelGrid");
   const typeOptions = document.getElementById("typeOptions");
 
   // New Toggles
@@ -69,12 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Mock Data Generation & Normalization ---
   function enrichWithMockData(v) {
-    // Generate consistent mock data based on ID
-    // If ID is numeric string like "car-123", use that.
+    // Keep existing mock data logic for consistency
     const idNum = parseInt(v.id.replace(/[^0-9]/g, '')) || 0;
     const seed = idNum;
-
-    // Helper for pseudo-random
     const rand = (offset) => {
         const x = Math.sin(seed + offset) * 10000;
         return x - Math.floor(x);
@@ -83,31 +81,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const fuelTypes = ["Petrol", "Diesel", "Hybrid", "Electric", "Plug-in"];
     const transmissions = ["Manual", "Automatic"];
     
-    // Monthly Price Mock logic (if real price is very high, just use "Contact Us" or scale it)
-    // If real priceRaw exists, calculate consistent monthly
     let priceMonthly = 0;
     let initialPayment = 0;
     
     if (v.priceRaw > 0) {
-        // Assume simplified leasing: 1/40th of price per month roughly?
         priceMonthly = Math.floor(v.priceRaw / 48);
         initialPayment = Math.floor(v.priceRaw * 0.15);
     } else {
-        // Fallback mock
         priceMonthly = Math.floor(rand(1) * 400) + 150;
         initialPayment = Math.floor(priceMonthly * (Math.floor(rand(2) * 6) + 3));
     }
 
-    // Spec Fallbacks
-    // We want to use v.specs.* if available, otherwise generate mock
     const specs = v.specs || {};
-
     const fuel = specs.fuel || v.fuel || fuelTypes[Math.floor(rand(5) * fuelTypes.length)];
     const transmission = specs.transmission || v.transmission || transmissions[Math.floor(rand(6) * transmissions.length)];
     
-    // Parse engine size from specs if possible, or mock
     let engineSize = specs.engine || v.engineSize || (1.0 + rand(8) * 2.0).toFixed(1);
-    // If engine is like "1995 cc", convert to 2.0
     if (specs.engine && specs.engine.includes("cc")) {
         const cc = parseInt(specs.engine);
         if (!isNaN(cc)) engineSize = (cc / 1000).toFixed(1);
@@ -115,20 +104,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const type = specs.bodyType || v.type || "Car";
 
+    // NEW: Construct menu.png image path
+    // Structure: images/Car images/{Brand}/{Model}/{Variant}/menu.png
+    // Note: We need to be careful with exact folder names.
+    // The data has 'variant' which usually matches the folder name
+    // Example variant: "Abarth 595 Cabrio 2016 - present, 3 doors, convertible"
+    // FIX: Image folder is in root, so we need to go up one level from PC Version/index.html? 
+    // Actually, if we are in PC Version/category.html, images/Car images/.. would look for PC Version/images/Car images/..
+    // But 'Car images' is in 'Sherif-Bach/Car images'.
+    // So we need '../Car images/...'
+    
+    // Helper to fix path
+    const fixPath = (p) => {
+        if (!p) return p;
+        if (p.startsWith("images/Car images/")) {
+            return p.replace("images/Car images/", "../Car images/");
+        }
+        return p;
+    };
+
+    const imagePath = fixPath(`images/Car images/${v.brand}/${v.model}/${v.variant}/menu.png`);
+
     return {
       ...v,
-      // Flattened props for easy access in createGridCard
       fuel: fuel,
       transmission: transmission,
       engineSize: engineSize,
-      type: type, // Ensure type is top-level
+      type: type,
       seats: specs.seats || v.seats || (Math.floor(rand(7) * 4) + 2),
       doors: specs.doors || v.doors || 5,
-      
       priceMonthly: priceMonthly,
       initialPayment: initialPayment,
       contractLength: [24, 36, 48][Math.floor(rand(3) * 3)],
       mileage: [5000, 8000, 10000, 12000][Math.floor(rand(4) * 4)],
+      realImagePath: imagePath,
+      // Fix other image paths too
+      coverImage: fixPath(v.coverImage),
+      images: (v.images || []).map(fixPath)
     };
   }
 
@@ -166,12 +178,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createGridCard(v) {
-    // Use the first image from the list or a placeholder if missing
-    let imgUrl = v.coverImage || (v.images && v.images.length > 0 ? v.images[0] : null);
+    // Priority: realImagePath (menu.png) > coverImage > images[0] > placeholder
+    let imgUrl = v.realImagePath;
     
-    if (!imgUrl) {
-        imgUrl = `https://placehold.co/600x450/2c2c2c/D4AF37?text=${v.brand}+${v.model}`;
-    }
+    // We'll use onerror in the img tag to fallback if menu.png doesn't exist
+    const fallbackUrl = v.coverImage || (v.images && v.images.length > 0 ? v.images[0] : `https://placehold.co/600x450/2c2c2c/D4AF37?text=${v.brand}+${v.model}`);
     
     const brandLogo = getBrandLogo(v.brand);
 
@@ -179,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="product-card">
           <div class="card-image-wrapper">
              <span class="badge-count"><i class="fas fa-layer-group"></i> Custom</span>
-             <img src="${imgUrl}" class="card-image" alt="${v.model}" loading="lazy">
+             <img src="${imgUrl}" class="card-image" alt="${v.model}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackUrl}';">
           </div>
 
           <div class="card-content">
@@ -239,6 +250,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeFilters.make.size > 0 && !activeFilters.make.has(v.brand))
         return false;
 
+      if (activeFilters.model.size > 0 && !activeFilters.model.has(v.model))
+        return false;
+
       if (activeFilters.year.size > 0 && !activeFilters.year.has(v.year))
         return false;
 
@@ -278,7 +292,12 @@ document.addEventListener("DOMContentLoaded", () => {
       resetFiltersLink.addEventListener('click', (e) => {
         e.preventDefault();
         activeFilters.make.clear();
+        activeFilters.model.clear();
         activeFilters.year.clear();
+        
+        // Reset UI
+        document.querySelectorAll('.brand-option.selected').forEach(el => el.classList.remove('selected'));
+        if (modelGrid) modelGrid.innerHTML = '<div class="empty-filter-state">Select a Make first</div>';
         // activeFilters.fuel.clear();
         // activeFilters.gearbox.clear();
         // activeFilters.minPrice = 0;
@@ -321,6 +340,20 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Mobile FAB Toggle
+    const mobileFab = document.getElementById("mobileFilterFab");
+    if (mobileFab) {
+        mobileFab.addEventListener("click", () => {
+             const filterGroup = document.querySelector(".bar-filters-group");
+             if (filterGroup) {
+                 filterGroup.classList.toggle("show-mobile");
+                 if (filterGroup.classList.contains("show-mobile")) {
+                     document.getElementById("filterBar").scrollIntoView({ behavior: "smooth" });
+                 }
+             }
+        });
+    }
+
     // View Dropdown Toggling
     document.addEventListener("click", (e) => {
       const trigger = e.target.closest(".filter-trigger");
@@ -341,13 +374,54 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+
+
+  function injectModels(brand) {
+    if (!modelGrid) return;
+    
+    // Filter models for this brand
+    const models = [...new Set(allVehicles.filter(v => v.brand === brand).map(v => v.model))].sort();
+    
+    if (models.length === 0) {
+        modelGrid.innerHTML = '<div class="empty-filter-state">No models found</div>';
+        return;
+    }
+
+    modelGrid.innerHTML = models.map(m => `
+        <div class="brand-option ${activeFilters.model.has(m) ? 'selected' : ''}" 
+             onclick="this.dispatchEvent(new CustomEvent('model-select', {detail: '${m}', bubbles: true}))">
+            ${m}
+        </div>
+    `).join("");
+
+    modelGrid.addEventListener("model-select", (e) => {
+        const m = e.detail;
+        if (activeFilters.model.has(m)) {
+            activeFilters.model.delete(m);
+            e.target.classList.remove('selected');
+        } else {
+            // For models, usually single select is better, but multi support is fine
+            // Let's stick to valid multi-select for consistency or single?
+            // User's provided code was single select logic mostly, but let's allow multi for now or clear others
+            // Let's do single select for model to avoid confusion
+            activeFilters.model.clear();
+            document.querySelectorAll('#modelGrid .brand-option').forEach(el => el.classList.remove('selected'));
+            
+            activeFilters.model.add(m);
+            e.target.classList.add('selected');
+        }
+        applyFilters();
+    });
+  }
+
   function injectBrands() {
     const brands = [...new Set(allVehicles.map((v) => v.brand))].sort();
     if (brandGrid) {
       brandGrid.innerHTML = brands
         .map(
           (b) => `
-             <div class="brand-option" style="padding:0.5rem; cursor:pointer;" onclick="this.dispatchEvent(new CustomEvent('brand-select', {detail: '${b}', bubbles: true}))">
+             <div class="brand-option ${activeFilters.make.has(b) ? 'selected' : ''}" 
+                  onclick="this.dispatchEvent(new CustomEvent('brand-select', {detail: '${b}', bubbles: true}))">
                 ${b}
              </div>
           `
@@ -356,8 +430,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
       brandGrid.addEventListener("brand-select", (e) => {
         const b = e.detail;
-        if (activeFilters.make.has(b)) activeFilters.make.delete(b);
-        else activeFilters.make.add(b);
+        
+        // Toggle selection
+        if (activeFilters.make.has(b)) {
+            activeFilters.make.delete(b);
+            e.target.classList.remove('selected');
+            // Check if any other brands are selected. If not, clear models.
+            if (activeFilters.make.size === 0) {
+                 modelGrid.innerHTML = '<div class="empty-filter-state">Select a Make first</div>';
+                 activeFilters.model.clear();
+            }
+        } else {
+            // Single select for Brand creates a better flow for defining Models
+            activeFilters.make.clear(); 
+            document.querySelectorAll('#brandGrid .brand-option').forEach(el => el.classList.remove('selected'));
+            
+            activeFilters.make.add(b);
+            e.target.classList.add('selected');
+            
+            // Populate models for this brand
+            injectModels(b);
+            activeFilters.model.clear(); // Reset model selection when brand changes
+        }
         applyFilters();
       });
     }
@@ -397,4 +491,5 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     return map[brand] || CONFIG.images.carBrands[0];
   }
+    init();
 });

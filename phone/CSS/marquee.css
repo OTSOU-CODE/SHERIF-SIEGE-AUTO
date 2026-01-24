@@ -1,0 +1,81 @@
+/* Marquee Component CSS */
+:root {
+  --marquee-gap: 1rem;
+  --marquee-duration: 30s;
+}
+
+.marquee-root {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  /* Optional: Add gradient mask for fade effect at edges like standard Magic UI marquees */
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: var(--marquee-gap);
+  /* The animation moves the track */
+  animation: marquee-scroll var(--marquee-duration) linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: var(--marquee-play-state, running);
+}
+
+.marquee-item {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Animation Keyframes */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-reverse {
+  animation-direction: reverse;
+}
+
+/* Utility for pausing on hover */
+.pause-on-hover:hover .marquee-track {
+  --marquee-play-state: paused;
+}
+
+/* Brand Item Styles */
+.marquee-brand-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 2rem;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.marquee-brand-item:hover {
+  opacity: 1;
+}
+
+.marquee-brand-item img {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  /* Filter to make white logos if needed, or keeping original */
+}
+
+.marquee-brand-item span {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-primary, #fff);
+  white-space: nowrap;
+}

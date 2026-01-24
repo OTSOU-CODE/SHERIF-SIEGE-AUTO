@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "brand_name": "Sherif-Auto",
+    "description": "Core design tokens for UI implementation."
+  },
+  "colors": {
+    "primary": {
+      "DEFAULT": "#d4af37",
+      "dark": "#b8941f",
+      "foreground": "#2c2c2c"
+    },
+    "secondary": {
+      "DEFAULT": "#2c2c2c",
+      "foreground": "#ffffff"
+    },
+    "accent": "#8b6914",
+    "background": {
+      "light": "#ffffff",
+      "dark": "#1a1a1a"
+    },
+    "surface": {
+      "light": "#f8f9fa",
+      "dark": "#2c2c2c"
+    },
+    "text": {
+      "primary": "#2c2c2c",
+      "secondary": "#666666",
+      "light": "#999999",
+      "dark_mode_primary": "#ffffff"
+    },
+    "status": {
+      "success": "#4caf50",
+      "error": "#f44336",
+      "warning": "#ff9800"
+    }
+  },
+  "typography": {
+    "font_family_headings": ["Playfair Display", "serif"],
+    "font_family_body": ["Montserrat", "sans-serif"],
+    "font_weight_bold": "700",
+    "font_weight_extra_bold": "800",
+    "font_weight_normal": "400"
+  },
+  "ui": {
+    "border_radius_default": "1.5rem",
+    "border_radius_small": "0.5rem",
+    "border_radius_large": "2rem",
+    "spacing_base_unit": "1rem",
+    "shadows": {
+      "sm": "0 2px 4px rgba(0, 0, 0, 0.1)",
+      "md": "0 4px 8px rgba(0, 0, 0, 0.15)",
+      "lg": "0 8px 16px rgba(0, 0, 0, 0.2)"
+    }
+  }
+}
