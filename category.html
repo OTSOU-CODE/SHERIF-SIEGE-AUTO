@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Vehicle Category - Sherif-Auto</title>
+    <meta
+      name="description"
+      content="Sherif-Auto - Browse our vehicle categories and upholstery services."
+    />
+
+    <!-- Preload critical resources -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      as="style"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="CSS/style.css" />
+    <link rel="stylesheet" href="CSS/theme-transition.css" />
+    <link rel="stylesheet" href="CSS/upholstery.css" />
+    <!-- Premium Design Upgrade -->
+    <link rel="stylesheet" href="CSS/navbar.css" />
+    <link rel="stylesheet" href="CSS/footer.css" />
+  </head>
+
+  <body>
+    <!-- Navigation (Copied from index.html) -->
+    <nav class="navbar" id="navbar" style="display: none !important">
+      <div class="nav-container">
+        <!-- Left: Branding -->
+        <div class="nav-left">
+          <div class="nav-brand">
+            <div class="nav-logo">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <!-- Seat Base -->
+                <rect
+                  x="3"
+                  y="14"
+                  width="18"
+                  height="6"
+                  rx="2"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="0.8"
+                />
+                <!-- Seat Back -->
+                <rect
+                  x="4"
+                  y="6"
+                  width="16"
+                  height="10"
+                  rx="2"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="0.8"
+                />
+                <!-- Headrest -->
+                <rect
+                  x="7"
+                  y="2"
+                  width="10"
+                  height="6"
+                  rx="3"
+                  fill="#2C2C2C"
+                  stroke="#D4AF37"
+                  stroke-width="0.8"
+                />
+                <!-- Seat Cushion Detail -->
+                <rect
+                  x="5"
+                  y="15"
+                  width="14"
+                  height="2"
+                  rx="1"
+                  fill="#1A1A1A"
+                  opacity="0.6"
+                />
+                <!-- Back Support Lines -->
+                <line
+                  x1="6"
+                  y1="8"
+                  x2="6"
+                  y2="14"
+                  stroke="#8B6914"
+                  stroke-width="0.5"
+                  opacity="0.7"
+                />
+                <line
+                  x1="18"
+                  y1="8"
+                  x2="18"
+                  y2="14"
+                  stroke="#8B6914"
+                  stroke-width="0.5"
+                  opacity="0.7"
+                />
+                <line
+                  x1="12"
+                  y1="8"
+                  x2="12"
+                  y2="14"
+                  stroke="#8B6914"
+                  stroke-width="0.5"
+                  opacity="0.7"
+                />
+                <!-- Stitching Pattern -->
+                <path
+                  d="M8 4 Q12 2 16 4"
+                  stroke="#8B6914"
+                  stroke-width="0.3"
+                  fill="none"
+                  opacity="0.5"
+                />
+                <path
+                  d="M8 5 Q12 3 16 5"
+                  stroke="#8B6914"
+                  stroke-width="0.3"
+                  fill="none"
+                  opacity="0.5"
+                />
+              </svg>
+            </div>
+            <div class="brand-text">
+              <h1>Sherif-Auto</h1>
+              <span>Auto Upholstery</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Navigation Links -->
+        <div class="nav-center desktop-only">
+          <a href="index.html#home" class="nav-link">Home</a>
+          <a href="index.html#services" class="nav-link">Services</a>
+          <a href="index.html#why-choose-us" class="nav-link">About</a>
+          <a href="category.html" class="nav-link active">Category</a>
+          <a href="gallery.html" class="nav-link">Our Work</a>
+          <a href="index.html#contact" class="nav-link">Contact</a>
+        </div>
+
+        <!-- Right: Utilities (Search & Theme) -->
+        <div class="nav-right">
+          <!-- Search Bar -->
+          <div class="search-container">
+            <button class="search-toggle-btn" id="search-toggle" title="Search">
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="search-expandable">
+              <input
+                type="text"
+                id="header-search-input"
+                placeholder="Search models or services..."
+              />
+              <div class="search-results-dropdown" id="header-search-results">
+                <!-- Results injected here -->
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="theme-toggle-btn"
+            id="theme-toggle"
+            title="Switch Theme"
+          >
+            <i class="fas fa-moon"></i>
+          </button>
+
+          <div class="nav-toggle" id="nav-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </div>
+        </div>
+
+        <!-- Mobile Menu overlay -->
+        <div class="nav-menu" id="nav-menu">
+          <a href="index.html#home" class="nav-link">Home</a>
+          <a href="index.html#services" class="nav-link">Services</a>
+          <a href="index.html#why-choose-us" class="nav-link">About</a>
+          <a href="category.html" class="nav-link active">Category</a>
+          <a href="gallery.html" class="nav-link">Our Work</a>
+          <a href="index.html#contact" class="nav-link">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-category">
+      <div class="hero-category-content">
+        <h1 class="hero-title-large">
+          Premium Customization<br />
+          <span style="color: var(--upholstery-gold)"
+            >Transform Your Vehicle</span
+          >
+        </h1>
+        <p class="hero-subtitle">
+          Revitalize your car's interior with our bespoke upholstery services.
+          Experience luxury and comfort tailored to your style.
+          <a href="#" style="color: white; text-decoration: underline"
+            >Read more</a
+          >
+        </p>
+      </div>
+    </section>
+
+    <!-- Sticky Search & Filter Bar -->
+    <div class="filter-sticky-bar" id="filterBar">
+      <div class="filter-intro-row">
+        <span>Filter by options</span>
+        <button class="reset-filters-btn" id="resetFiltersLink">
+          Reset filters
+        </button>
+      </div>
+      <div class="filter-bar-content">
+        <!-- Filter Groups -->
+        <div class="bar-filters-group">
+          <!-- Make Filter -->
+          <div class="filter-dropdown" id="makeFilter">
+            <div class="filter-trigger">
+              <span>Make</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="filter-menu">
+              <div class="brand-grid" id="brandGrid">
+                <!-- Brands injected by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Model Filter -->
+          <div class="filter-dropdown" id="modelFilter">
+            <div class="filter-trigger">
+              <span>Model</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="filter-menu">
+              <div class="brand-grid" id="modelGrid">
+                <!-- Models injected by JS -->
+                <div class="empty-filter-state">Select a Make first</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Year Filter -->
+          <div class="filter-dropdown" id="yearFilter">
+            <div class="filter-trigger">
+              <span>Year</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="filter-menu">
+              <div
+                class="simple-list-options"
+                id="yearOptions"
+                data-filter="year"
+              >
+                <!-- Years injected by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Body Type Removed -->
+          <!-- Gearbox Removed -->
+          <!-- Min Price Removed -->
+          <!-- Max Price Removed -->
+          <!-- Fuel Type Removed -->
+        </div>
+      </div>
+
+      <!-- Second Row: Type Toggle & Sort -->
+      <div class="filter-controls-row">
+        <!-- Business/Personal Toggle Removed -->
+
+        <div class="sort-group">
+          <span>Sort by</span>
+          <div
+            class="filter-dropdown sort-dropdown"
+            style="display: inline-block; width: auto; margin: 0"
+          >
+            <div
+              class="filter-trigger"
+              style="padding: 0.5rem 1rem; border: 1px solid #ddd"
+            >
+              <span id="currentSort">Relevance</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Filters & Results Info -->
+    <div class="container active-filters-container">
+      <div class="results-meta">
+        <span id="resultsCount">Loading...</span>
+        <span class="results-subtext"
+          >Select a vehicle to view our bespoke upholstery packages. Contact us
+          for a personalized quote based on your material choices.
+          <a href="#">Learn more</a></span
+        >
+      </div>
+    </div>
+
+    <!-- Main Results Grid -->
+    <main class="container results-grid-container">
+      <div class="vehicles-grid" id="vehicleGrid">
+        <!-- Cards injected by JS -->
+      </div>
+
+      <!-- Pagination / Load More -->
+      <div class="pagination" id="pagination">
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">...</button>
+      </div>
+    </main>
+
+    <!-- Mobile FAB -->
+    <button class="mobile-fab-filter" id="mobileFilterFab">
+      <i class="fas fa-filter"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="JS/config.js"></script>
+    <script src="JS/vehicles_data.js"></script> <!-- Local Data Fallback -->
+    <script src="JS/script.js"></script>
+
+    <script src="JS/category.js" defer></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tubelight Navbar & Footer Initialization -->
+    <script type="module">
+      import { createTubelightNavbar } from "./JS/navbar.js";
+      import { createFooter } from "./JS/footer.js";
+
+      const navBrandHtml = `
+          <div class="nav-brand">
+            <div class="nav-logo">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect x="3" y="14" width="18" height="6" rx="2" fill="#2C2C2C" stroke="#D4AF37" stroke-width="0.8" />
+                <rect x="4" y="6" width="16" height="10" rx="2" fill="#2C2C2C" stroke="#D4AF37" stroke-width="0.8" />
+                <rect x="7" y="2" width="10" height="6" rx="3" fill="#2C2C2C" stroke="#D4AF37" stroke-width="0.8" />
+                <rect x="5" y="15" width="14" height="2" rx="1" fill="#1A1A1A" opacity="0.6" />
+                <line x1="6" y1="8" x2="6" y2="14" stroke="#8B6914" stroke-width="0.5" opacity="0.7" />
+                <line x1="18" y1="8" x2="18" y2="14" stroke="#8B6914" stroke-width="0.5" opacity="0.7" />
+                <line x1="12" y1="8" x2="12" y2="14" stroke="#8B6914" stroke-width="0.5" opacity="0.7" />
+                <path d="M8 4 Q12 2 16 4" stroke="#8B6914" stroke-width="0.3" fill="none" opacity="0.5" />
+                <path d="M8 5 Q12 3 16 5" stroke="#8B6914" stroke-width="0.3" fill="none" opacity="0.5" />
+              </svg>
+            </div>
+            <div class="brand-text">
+              <h1>Sherif-Auto</h1>
+              <span>Auto Upholstery</span>
+            </div>
+          </div>
+      `;
+
+      const navItems = [
+        { name: "Home", url: "index.html#home", icon: "home" },
+        { name: "About", url: "index.html#why-choose-us", icon: "info" },
+        { name: "Services", url: "index.html#services", icon: "wrench" },
+        { name: "Category", url: "category.html", icon: "grid" },
+        { name: "Our Work", url: "gallery.html", icon: "image" },
+        { name: "Contact", url: "index.html#contact", icon: "phone" },
+      ];
+
+      createTubelightNavbar({
+        items: navItems,
+        target: document.body,
+        logo: navBrandHtml,
+      });
+
+      // Initialize Footer
+      createFooter(document.body);
+    </script>
+
+    <!-- Staggered Menu CSS -->
+    <link rel="stylesheet" href="CSS/staggered-menu.css">
+    
+    <!-- GSAP for Staggered Menu -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="module">
+        import { StaggeredMenu } from './JS/staggered-menu.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Define menu items similar to existing nav
+            const menuItems = [
+                { label: 'Home', link: 'index.html#home' },
+                { label: 'Services', link: 'index.html#services' },
+                { label: 'About', link: 'index.html#why-choose-us' },
+                { label: 'Category', link: 'category.html' },
+                { label: 'Our Work', link: 'gallery.html' },
+                { label: 'Contact', link: 'index.html#contact' }
+            ];
+
+            // Simplified Logo for Staggered Menu (Mobile) - UPDATED FOR DARK BACKGROUND
+            const mobileLogo = `
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="14" width="18" height="6" rx="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.8" />
+                      <rect x="4" y="6" width="16" height="10" rx="2" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.8" />
+                      <rect x="7" y="2" width="10" height="6" rx="3" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.8" />
+                      <rect x="5" y="15" width="14" height="2" rx="1" fill="#D4AF37" opacity="0.6" />
+                      <line x1="6" y1="8" x2="6" y2="14" stroke="#D4AF37" stroke-width="0.5" opacity="0.7" />
+                      <line x1="18" y1="8" x2="18" y2="14" stroke="#D4AF37" stroke-width="0.5" opacity="0.7" />
+                      <line x1="12" y1="8" x2="12" y2="14" stroke="#D4AF37" stroke-width="0.5" opacity="0.7" />
+                      <path d="M8 4 Q12 2 16 4" stroke="#D4AF37" stroke-width="0.3" fill="none" opacity="0.5" />
+                      <path d="M8 5 Q12 3 16 5" stroke="#D4AF37" stroke-width="0.3" fill="none" opacity="0.5" />
+                  </svg>
+            `;
+            
+            new StaggeredMenu({
+                items: menuItems,
+                logo: mobileLogo, // Pass the SVG here
+                logoUrl: '',
+                menuButtonColor: '#ffffff', // White
+                openMenuButtonColor: '#333',
+                accentColor: '#D4AF37', // Gold to match theme
+                position: 'right',
+                colors: ['#2C2C2C', '#1A1A1A'], // Dark theme colors
+                title: 'Menu'
+            });
+        });
+    </script>
+  </body>
+</html>
